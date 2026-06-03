@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harsha → Meeami Audio AI Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/*
+  UX LAWS APPLIED:
+  ─ Aesthetic-Usability Effect: Beautiful interfaces are perceived as easier → warm cream palette, generous whitespace
+  ─ Zeigarnik Effect: Incomplete tasks create productive tension → prominent progress bars always visible
+  ─ Fitts's Law: Large targets are faster to click → 44px+ checkbox zones, full-row click areas
+  ─ Hick's Law: Fewer choices = faster decisions → progressive disclosure (weeks collapse), one CTA per zone
+  ─ Law of Proximity: Related items grouped → tasks inside day card, resources in separate section
+  ─ Peak-End Rule: Memorable peaks + endings → celebration on week complete, satisfying check animation
+  ─ Serial Position Effect: First + last remembered most → today auto-highlighted, deliverable at top of week
+  ─ Miller's Law: 7±2 chunks → 7 days per week, max 5 tasks per day
+  ─ Jakob's Law: Use familiar patterns → card-based, tab navigation, progress bar shape users already know
+  ─ Law of Common Region: Borders define belonging → every day is its own card
+*/
+
+:root {
+  --bg:        #F7F6F3;
+  --bg2:       #EFEDE8;
+  --surface:   #FFFFFF;
+  --surface2:  #FAFAF8;
+  --border:    #E8E3DB;
+  --border2:   #D4CEC4;
+  --text:      #1C1917;
+  --text2:     #44403C;
+  --muted:     #78716C;
+  --muted2:    #A8A29E;
+
+  --indigo:       #4F46E5;
+  --indigo-d:     #3730A3;
+  --indigo-light: #EEF2FF;
+  --indigo-mid:   #C7D2FE;
+
+  --green:        #059669;
+  --green-d:      #047857;
+  --green-light:  #D1FAE5;
+  --green-mid:    #6EE7B7;
+
+  --amber:        #D97706;
+  --amber-light:  #FEF3C7;
+  --amber-mid:    #FCD34D;
+
+  --rose:         #E11D48;
+  --rose-light:   #FFE4E6;
+
+  --blue:         #2563EB;
+  --blue-light:   #DBEAFE;
+
+  --cyan:         #0891B2;
+  --cyan-light:   #CFFAFE;
+
+  --purple:       #7C3AED;
+  --purple-light: #EDE9FE;
+
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+
+  --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 6rem;
+  min-height: 100vh;
+}
+
+/* ══════════════════════════════════════════════
+   STICKY HEADER  — always visible, gives context
+   Fitts + Zeigarnik: progress bar is never hidden
+   ══════════════════════════════════════════════ */
+.header {
+  position: sticky; top: 0; z-index: 300;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04), var(--shadow-sm);
+}
+.header-inner {
+  max-width: 860px; margin: 0 auto;
+  padding: 0.9rem 1.25rem 0;
+}
+.header-top {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 0.75rem; flex-wrap: wrap;
+}
+.brand {
+  display: flex; align-items: center; gap: 0.6rem; flex: 1;
+}
+.brand-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--indigo), #818CF8);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+}
+.brand-text { min-width: 0; }
+.brand-name {
+  font-weight: 800; font-size: 0.88rem; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.brand-sub { font-size: 0.68rem; color: var(--muted); margin-top: -1px; }
+
+.header-stats {
+  display: flex; gap: 0.5rem; flex-shrink: 0;
+}
+.stat-pill {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 0.3rem 0.65rem;
+  min-width: 48px;
+}
+.stat-val { font-size: 0.95rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+.stat-val.green { color: var(--green); }
+.stat-val.amber { color: var(--amber); }
+.stat-lbl { font-size: 0.58rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+/* Overall progress bar — Zeigarnik: always visible incomplete state */
+.progress-wrap { margin-bottom: 0; }
+.progress-label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.3rem;
+}
+.progress-label span { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+.progress-label strong { font-size: 0.75rem; font-weight: 800; color: var(--indigo); }
+.progress-track {
+  height: 7px; background: var(--bg2); border-radius: 4px;
+  overflow: hidden; position: relative;
+}
+.progress-fill {
+  height: 100%; width: 0%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--indigo) 0%, #818CF8 60%, #A5B4FC 100%);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  height: 100%; width: 40px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer { 0%,100%{opacity:0} 50%{opacity:1} }
+
+/* Month tabs — Hick's Law: one clear selection at a time */
+.month-tabs {
+  display: flex; gap: 0.25rem;
+  margin-top: 0.75rem; padding: 0 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.month-tabs::-webkit-scrollbar { display: none; }
+.month-tab {
+  padding: 0.55rem 1.1rem;
+  border: none; border-bottom: 2px solid transparent;
+  background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 0.78rem; font-weight: 600;
+  color: var(--muted); white-space: nowrap;
+  transition: var(--transition); border-radius: var(--r-xs) var(--r-xs) 0 0;
+}
+.month-tab:hover { color: var(--text); background: var(--bg); }
+.month-tab.active {
+  color: var(--indigo);
+  border-bottom-color: var(--indigo);
+  background: var(--indigo-light);
+}
+
+/* ══════════════════════════════════════════════
+   MAIN LAYOUT
+   ══════════════════════════════════════════════ */
+.container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+.month-section { display: none; }
+.month-section.active { display: block; }
+
+/* Month hero card */
+.month-hero {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 1.5rem;
+  margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);
+  display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;
+}
+.month-badge {
+  width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--indigo-light) 0%, #C7D2FE 100%);
+  color: var(--indigo); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.month-info { flex: 1; min-width: 200px; }
+.month-title { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.month-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+.month-chips {
+  display: flex; gap: 0.4rem; margin-top: 0.9rem; flex-wrap: wrap;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: var(--green-light); color: var(--green-d);
+  border: 1px solid var(--green-mid); border-radius: 100px;
+  padding: 0.22rem 0.7rem; font-size: 0.68rem; font-weight: 700;
+}
+.chip::before { content: '✓'; }
+
+/* toolbar */
+.toolbar {
+  display: flex; gap: 0.5rem; margin-bottom: 1rem;
+  align-items: center; flex-wrap: wrap;
+}
+.tool-btn {
+  background: var(--surface); border: 1.5px solid var(--border2);
+  color: var(--muted); padding: 0.4rem 0.9rem;
+  border-radius: 100px; font-size: 0.73rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); font-family: inherit;
+}
+.tool-btn:hover { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.tool-btn.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+.today-chip {
+  margin-left: auto; display: flex; align-items: center; gap: 0.4rem;
+  background: var(--amber-light); border: 1.5px solid var(--amber-mid);
+  border-radius: 100px; padding: 0.35rem 0.85rem;
+  font-size: 0.72rem; font-weight: 600; color: var(--amber);
+}
+.today-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* ══════════════════════════════════════════════
+   WEEK CARD  — Law of Common Region, Proximity
+   ══════════════════════════════════════════════ */
+.week-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); margin-bottom: 0.75rem;
+  box-shadow: var(--shadow-sm); overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.week-card:hover { box-shadow: var(--shadow-md); }
+.week-card.complete { border-color: var(--green-mid); }
+.week-card.complete .week-header { background: linear-gradient(135deg, #F0FDF4, #D1FAE5); }
+
+/* Week header — Fitts's Law: large click target */
+.week-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 1.25rem; cursor: pointer; user-select: none;
+  transition: background 0.15s;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+.week-card:not(.open) .week-header { border-radius: var(--r-lg); }
+.week-header:hover { background: var(--surface2); }
+.week-card.open .week-header { border-bottom: 1px solid var(--border); }
+
+.week-badge {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: var(--indigo-light); color: var(--indigo);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 800; letter-spacing: -0.02em;
+}
+.week-card.complete .week-badge { background: var(--green-light); color: var(--green-d); }
+
+.week-info { flex: 1; min-width: 0; }
+.week-title { font-weight: 700; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.week-goal  { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.week-meta { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+.week-pct-bar { display: flex; align-items: center; gap: 0.5rem; }
+.mini-track { width: 64px; height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+.mini-fill  { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), #34D399); border-radius: 3px; transition: width 0.4s ease; }
+.week-card.complete .mini-fill { background: linear-gradient(90deg, var(--green-d), var(--green)); }
+.mini-pct { font-size: 0.68rem; font-weight: 700; color: var(--muted); min-width: 2.4em; text-align: right; }
+.week-card.complete .mini-pct { color: var(--green-d); }
+
+.chevron { color: var(--muted2); font-size: 0.6rem; transition: transform 0.22s ease; flex-shrink: 0; margin-left: 0.25rem; }
+.week-card.open .chevron { transform: rotate(180deg); }
+
+/* Smooth open/close — JS sets explicit heights */
+.week-body {
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.22s ease;
+  will-change: height, opacity;
+}
+.week-card.open .week-body {
+  opacity: 1;
+  transition: height 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.28s ease 0.06s;
+}
+
+/* Month section fade transition */
+.month-section {
+  display: none;
+  animation: fadeSection 0.22s ease;
+}
+.month-section.active { display: block; }
+@keyframes fadeSection {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Challenge body — same smooth animation */
+.challenge-body {
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.22s ease;
+  will-change: height, opacity;
+}
+.challenge-wrap.open .challenge-body {
+  opacity: 1;
+  transition: height 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.28s ease 0.06s;
+}
+
+/* Deliverable — Serial Position Effect: shown first in week body */
+.deliverable {
+  margin: 1rem 1.25rem 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--indigo-light);
+  border-left: 3px solid var(--indigo);
+  border-radius: var(--r-xs);
+  font-size: 0.77rem; color: var(--indigo-d);
+  line-height: 1.55;
+}
+.deliverable strong { font-weight: 700; }
+
+/* ══════════════════════════════════════════════
+   DAY ROW  — Law of Common Region: each day is distinct
+   Fitts's Law: full row is the click target
+   ══════════════════════════════════════════════ */
+.days-wrap { padding: 0 1.25rem 0.25rem; }
+
+.day-card {
+  border: 1.5px solid var(--border); border-radius: var(--r-md);
+  margin-bottom: 0.5rem; overflow: hidden;
+  transition: var(--transition);
+  background: var(--surface2);
+}
+.day-card:hover { border-color: var(--border2); box-shadow: var(--shadow-sm); background: var(--surface); }
+.day-card.done { opacity: 0.52; }
+.day-card.today-glow { border-color: var(--indigo-mid) !important; background: var(--indigo-light) !important; box-shadow: 0 0 0 3px rgba(79,70,229,0.08) !important; }
+.day-card.hidden { display: none; }
+
+.day-inner { display: flex; align-items: flex-start; gap: 0; }
+
+/* Fitts's Law: checkbox zone is 44px wide clickable area */
+.day-check-zone {
+  width: 52px; flex-shrink: 0; display: flex;
+  align-items: flex-start; justify-content: center;
+  padding-top: 0.85rem;
+  cursor: pointer;
+}
+.day-check-zone input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px; border-radius: 6px;
+  border: 2px solid var(--border2); cursor: pointer;
+  position: relative; transition: var(--transition); flex-shrink: 0;
+  background: var(--surface);
+}
+.day-check-zone input[type="checkbox"]:hover { border-color: var(--green); }
+.day-check-zone input[type="checkbox"]:checked {
+  background: var(--green); border-color: var(--green);
+  animation: checkPop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes checkPop { 0%{transform:scale(1)} 40%{transform:scale(1.25)} 100%{transform:scale(1)} }
+.day-check-zone input[type="checkbox"]:checked::after {
+  content: ''; position: absolute;
+  left: 5px; top: 2px; width: 6px; height: 10px;
+  border: solid #fff; border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.day-content { flex: 1; padding: 0.7rem 1rem 0.75rem 0; min-width: 0; }
+
+.day-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.45rem; flex-wrap: wrap;
+}
+.day-label {
+  font-weight: 800; font-size: 0.8rem; color: var(--text);
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.1rem 0.5rem;
+  min-width: 3.2em; text-align: center;
+}
+.day-card.today-glow .day-label {
+  background: var(--indigo); color: #fff; border-color: var(--indigo);
+}
+.day-today-tag {
+  font-size: 0.62rem; font-weight: 700; color: var(--indigo);
+  background: var(--indigo-light); border: 1px solid var(--indigo-mid);
+  border-radius: 100px; padding: 0.08rem 0.45rem;
+}
+
+.task-list { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.task-item {
+  display: flex; align-items: flex-start; gap: 0.4rem;
+  font-size: 0.79rem; color: var(--text2); line-height: 1.55;
+}
+.day-card.done .task-item { text-decoration: line-through; color: var(--muted2); }
+
+/* Badge — Miller's Law: distinct type labels reduce cognitive load */
+.badge {
+  display: inline-block; flex-shrink: 0;
+  font-size: 0.58rem; font-weight: 800;
+  padding: 0.1rem 0.4rem; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-top: 0.18rem; white-space: nowrap;
+}
+.b-watch    { background: #FEE2E2; color: #DC2626; }
+.b-code     { background: var(--blue-light); color: var(--blue); }
+.b-build    { background: var(--amber-light); color: var(--amber); }
+.b-read     { background: var(--cyan-light); color: var(--cyan); }
+.b-practice { background: var(--green-light); color: var(--green-d); }
+.b-deploy   { background: var(--purple-light); color: var(--purple); }
+.b-push     { background: #F3F4F6; color: #6B7280; }
+.b-understand { background: #FEF9C3; color: #A16207; }
+.b-kaggle   { background: #E0F7FA; color: #0277BD; }
+
+/* ══════════════════════════════════════════════
+   RESOURCES — Proximity: visually separated block
+   ══════════════════════════════════════════════ */
+.resources-wrap {
+  margin: 0.5rem 1.25rem 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md); overflow: hidden;
+  background: var(--surface);
+}
+.resources-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  font-size: 0.68rem; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); }
+.res-link {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.7rem 1rem; border-bottom: 1px solid var(--border);
+  text-decoration: none; transition: background 0.12s;
+}
+.res-link:last-child { border-bottom: none; }
+.res-link:hover { background: var(--bg); }
+.res-icon-wrap {
+  width: 34px; height: 34px; border-radius: var(--r-xs); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800;
+}
+.ric-yt    { background: #FEE2E2; color: #DC2626; }
+.ric-gh    { background: #F1F5F9; color: #334155; }
+.ric-kg    { background: #E0F7FA; color: #0277BD; }
+.ric-hf    { background: #FFFBEB; color: #D97706; }
+.ric-blog  { background: var(--green-light); color: var(--green-d); }
+.ric-book  { background: var(--indigo-light); color: var(--indigo); }
+.ric-paper { background: var(--rose-light); color: var(--rose); }
+.res-text-wrap { min-width: 0; }
+.res-label { font-size: 0.77rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+.res-sub   { font-size: 0.65rem; color: var(--muted); display: block; margin-top: 0.05rem; }
+
+/* ══════════════════════════════════════════════
+   WEEK COMPLETE TOAST  — Peak-End Rule
+   ══════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  background: var(--green); color: #fff;
+  padding: 0.75rem 1.25rem; border-radius: var(--r-md);
+  font-size: 0.82rem; font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(120%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none; max-width: 280px;
+}
+.toast.show { transform: translateY(0); }
+
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
+.footer {
+  text-align: center; padding: 2.5rem 1rem 0;
+  border-top: 1px solid var(--border); margin-top: 2rem;
+}
+.footer-quote {
+  font-size: 0.85rem; font-style: italic; color: var(--text2);
+  font-weight: 500; margin-bottom: 0.4rem;
+}
+.footer-credit { font-size: 0.72rem; color: var(--muted2); }
+
+/* ══════════════════════════════════════════════
+   WEEKLY CHALLENGE SECTION
+   Visual identity: amber — clearly "test zone"
+   Testing Effect: answer hidden, revealed on click
+   ══════════════════════════════════════════════ */
+.challenge-wrap {
+  margin: 0 1.25rem 1.25rem;
+  border: 2px solid var(--amber-mid);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: #FFFDF7;
+}
+.challenge-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  border-bottom: 1.5px solid var(--amber-mid);
+  cursor: pointer; user-select: none;
+}
+.challenge-header-left {
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.challenge-icon {
+  font-size: 1.1rem; line-height: 1;
+}
+.challenge-title {
+  font-size: 0.82rem; font-weight: 800; color: #92400E;
+}
+.challenge-subtitle {
+  font-size: 0.68rem; color: #B45309; margin-top: 0.05rem;
+}
+.challenge-toggle-btn {
+  font-size: 0.68rem; font-weight: 700; color: #92400E;
+  background: rgba(255,255,255,0.6); border: 1px solid var(--amber-mid);
+  border-radius: 100px; padding: 0.2rem 0.65rem; cursor: pointer;
+  transition: var(--transition); font-family: inherit; white-space: nowrap;
+}
+.challenge-toggle-btn:hover { background: rgba(255,255,255,0.9); }
+
+.challenge-body { display: none; }
+.challenge-wrap.open .challenge-body { display: block; }
+.challenge-wrap.open .challenge-toggle-btn { content: 'Collapse'; }
+
+/* Build task */
+.build-task {
+  margin: 1rem 1rem 0.75rem;
+  background: var(--surface);
+  border: 1.5px solid var(--amber-mid);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+.build-task-header {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--amber-light);
+  border-bottom: 1px solid var(--amber-mid);
+}
+.build-task-label {
+  font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--amber);
+}
+.build-duration {
+  margin-left: auto;
+  font-size: 0.65rem; font-weight: 700; color: var(--amber);
+  background: rgba(217,119,6,0.1); border: 1px solid var(--amber-mid);
+  border-radius: 100px; padding: 0.08rem 0.5rem;
+}
+.build-task-body { padding: 0.75rem 0.9rem; }
+.build-task-text {
+  font-size: 0.8rem; color: var(--text2); line-height: 1.65;
+}
+.build-done-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-top: 0.75rem; padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+}
+.build-done-row label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.75rem; font-weight: 700; color: var(--muted);
+  cursor: pointer; user-select: none;
+}
+.build-done-row input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 18px; height: 18px; border-radius: 5px;
+  border: 2px solid var(--border2); cursor: pointer;
+  position: relative; transition: var(--transition);
+  flex-shrink: 0;
+}
+.build-done-row input[type="checkbox"]:checked {
+  background: var(--green); border-color: var(--green);
+  animation: checkPop 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.build-done-row input[type="checkbox"]:checked::after {
+  content: ''; position: absolute;
+  left: 4px; top: 1px; width: 6px; height: 10px;
+  border: solid #fff; border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+.build-done-row input:checked ~ span { color: var(--green-d); }
+
+/* Q&A */
+.qa-section { padding: 0 1rem 0.75rem; }
+.qa-title {
+  font-size: 0.68rem; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  margin-bottom: 0.6rem; margin-top: 0.1rem;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.5rem;
+}
+.qa-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); overflow: hidden;
+  transition: border-color 0.15s;
+}
+.qa-card:hover { border-color: var(--border2); }
+.qa-card.answered { border-color: var(--green-mid); }
+
+.qa-q {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem; font-weight: 600; color: var(--text);
+  line-height: 1.55;
+}
+.qa-reveal-btn {
+  width: 100%; padding: 0.45rem 0.85rem;
+  background: var(--bg); border: none; border-top: 1px solid var(--border);
+  font-size: 0.68rem; font-weight: 700; color: var(--indigo);
+  cursor: pointer; text-align: left; font-family: inherit;
+  transition: var(--transition); display: flex; align-items: center; gap: 0.35rem;
+}
+.qa-reveal-btn:hover { background: var(--indigo-light); }
+.qa-card.answered .qa-reveal-btn { color: var(--green-d); background: var(--green-light); border-top-color: var(--green-mid); }
+
+.qa-answer {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.77rem; color: var(--text2); line-height: 1.6;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.qa-card.revealed .qa-answer { display: block; }
+.qa-card.revealed .qa-reveal-btn { display: none; }
+
+/* Pass criteria */
+.pass-section {
+  margin: 0 1rem 1rem;
+  border: 1.5px solid var(--green-mid);
+  border-radius: var(--r-sm); overflow: hidden;
+  background: var(--surface);
+}
+.pass-header {
+  padding: 0.55rem 0.9rem;
+  background: var(--green-light);
+  border-bottom: 1px solid var(--green-mid);
+  font-size: 0.68rem; font-weight: 800; color: var(--green-d);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.pass-list { padding: 0.5rem 0.9rem 0.65rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.pass-item {
+  display: flex; align-items: flex-start; gap: 0.55rem;
+  font-size: 0.78rem; color: var(--text2);
+}
+.pass-item input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none;
+  width: 17px; height: 17px; border-radius: 4px; flex-shrink: 0;
+  border: 2px solid var(--border2); cursor: pointer;
+  position: relative; transition: var(--transition); margin-top: 0.12rem;
+}
+.pass-item input[type="checkbox"]:checked { background: var(--green); border-color: var(--green); animation: checkPop 0.25s cubic-bezier(0.4,0,0.2,1); }
+.pass-item input[type="checkbox"]:checked::after {
+  content: ''; position: absolute; left: 3.5px; top: 1px;
+  width: 5.5px; height: 9px; border: solid #fff;
+  border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+}
+.pass-item.checked { color: var(--muted); text-decoration: line-through; }
+
+/* ══════════════════════════════════════════════
+   MOBILE BOTTOM NAV
+   Thumb Zone Rule: months reachable from bottom
+   Only visible on mobile, hidden on desktop
+   ══════════════════════════════════════════════ */
+.mobile-bottom-nav {
+  display: none; /* hidden on desktop */
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 400;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 1rem 0.6rem;
+  padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
+}
+.mob-month-btn {
+  flex: 1; max-width: 100px;
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  padding: 0.5rem 0.5rem 0.4rem;
+  border: none; background: transparent; cursor: pointer;
+  border-radius: var(--r-sm); transition: var(--transition);
+  font-family: inherit; -webkit-tap-highlight-color: transparent;
+}
+.mob-month-btn:active { background: var(--bg); transform: scale(0.96); }
+.mob-month-btn.active { background: var(--indigo-light); }
+.mob-month-icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--bg2); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 800; color: var(--muted);
+  transition: var(--transition);
+}
+.mob-month-btn.active .mob-month-icon {
+  background: var(--indigo); border-color: var(--indigo); color: #fff;
+}
+.mob-month-label {
+  font-size: 0.6rem; font-weight: 700; color: var(--muted);
+  text-align: center; line-height: 1.2; letter-spacing: 0.02em;
+}
+.mob-month-btn.active .mob-month-label { color: var(--indigo); }
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Mobile First
+   Laws: Touch Target (44px min), Thumb Zone,
+         Content First, Progressive Disclosure
+   ══════════════════════════════════════════════ */
+
+/* ── Tablet: 641px – 860px ── */
+@media (max-width: 860px) {
+  .header-inner { padding: 0.9rem 1rem 0; }
+  .container    { padding: 1.25rem 1rem; }
+}
+
+/* ── Large Mobile: 481px – 680px ── */
+@media (max-width: 680px) {
+  /* Header: compress to save vertical space */
+  .header-inner  { padding: 0.7rem 0.9rem 0; }
+  .brand-name    { font-size: 0.82rem; }
+  .brand-sub     { display: none; } /* Progressive disclosure */
+  .stat-val      { font-size: 0.92rem; }
+  .stat-lbl      { font-size: 0.57rem; }
+  .stat-pill     { padding: 0.25rem 0.5rem; min-width: 42px; }
+  .progress-label span { font-size: 0.67rem; }
+  .progress-label strong { font-size: 0.72rem; }
+
+  /* Month tabs hidden — bottom nav takes over (Thumb Zone Rule) */
+  .month-tabs    { display: none; }
+  .mobile-bottom-nav { display: flex; }
+
+  /* Main content: full-width, tighter padding */
+  .container     { padding: 0.9rem 0.75rem 5rem; } /* 5rem = room for bottom nav */
+  body           { padding-bottom: 0; }
+
+  /* Month hero: compact */
+  .month-hero    { padding: 1rem; gap: 0.9rem; margin-bottom: 0.9rem; }
+  .month-badge   { width: 44px; height: 44px; border-radius: 11px; font-size: 1.3rem; }
+  .month-title   { font-size: 0.92rem; }
+  .month-sub     { font-size: 0.75rem; }
+  .chip          { font-size: 0.65rem; padding: 0.18rem 0.55rem; }
+
+  /* Week cards: full-width, touch-optimised header */
+  .week-card     { margin-bottom: 0.55rem; border-radius: var(--r-md); }
+  .week-header   {
+    padding: 0.9rem 1rem;  /* min 44px height guaranteed by content */
+    gap: 0.6rem;
+  }
+  .week-badge    { width: 34px; height: 34px; border-radius: 9px; font-size: 0.63rem; }
+  .week-title    { font-size: 0.84rem; }
+  .week-goal     { display: none; } /* Progressive disclosure */
+  .mini-track    { width: 52px; }
+  .mini-pct      { font-size: 0.65rem; }
+  .chevron       { margin-left: 0; }
+
+  /* Deliverable */
+  .deliverable   { margin: 0.75rem 0.9rem 0.6rem; padding: 0.65rem 0.85rem; font-size: 0.75rem; }
+
+  /* Days: Thumb-optimised — full row tap, large checkbox */
+  .days-wrap     { padding: 0 0.9rem 0.2rem; }
+  .day-card      { margin-bottom: 0.45rem; border-radius: var(--r-sm); }
+  .day-check-zone {
+    width: 48px; /* Thumb zone: 44px+ target */
+    padding-top: 0.8rem;
+  }
+  .day-check-zone input[type="checkbox"] {
+    width: 22px; height: 22px; /* 44px touch area via parent padding */
+  }
+  .day-content   { padding: 0.7rem 0.9rem 0.7rem 0; }
+  .day-label     { font-size: 0.7rem; padding: 0.1rem 0.4rem; }
+  .task-item     { font-size: 0.77rem; gap: 0.35rem; }
+  .badge         { font-size: 0.58rem; padding: 0.08rem 0.35rem; }
+
+  /* Resources: single column */
+  .resources-wrap { margin: 0.5rem 0.9rem 0.9rem; }
+  .res-grid      { grid-template-columns: 1fr; }
+  .res-link      { padding: 0.65rem 0.9rem; min-height: 44px; }
+  .res-icon-wrap { width: 30px; height: 30px; font-size: 0.6rem; }
+  .res-label     { font-size: 0.75rem; }
+  .res-sub       { font-size: 0.63rem; }
+
+  /* Challenge: single column, compact */
+  .challenge-wrap  { margin: 0 0.9rem 0.9rem; }
+  .challenge-header { padding: 0.7rem 0.9rem; }
+  .challenge-title  { font-size: 0.78rem; }
+  .challenge-subtitle { font-size: 0.65rem; }
+  .challenge-toggle-btn { font-size: 0.65rem; padding: 0.18rem 0.55rem; }
+  .build-task    { margin: 0.75rem 0.75rem 0.5rem; }
+  .build-task-header { padding: 0.5rem 0.8rem; }
+  .build-task-label  { font-size: 0.63rem; }
+  .build-task-body   { padding: 0.65rem 0.8rem; }
+  .build-task-text   { font-size: 0.77rem; }
+  .build-done-row label { font-size: 0.72rem; }
+  .qa-section    { padding: 0 0.75rem 0.65rem; }
+  .qa-title      { font-size: 0.65rem; }
+  .qa-grid       { grid-template-columns: 1fr; gap: 0.4rem; }
+  .qa-q          { font-size: 0.76rem; padding: 0.6rem 0.8rem; }
+  .qa-reveal-btn { padding: 0.42rem 0.8rem; font-size: 0.66rem; min-height: 44px; }
+  .qa-answer     { font-size: 0.75rem; padding: 0.6rem 0.8rem; }
+  .pass-section  { margin: 0 0.75rem 0.75rem; }
+  .pass-header   { padding: 0.5rem 0.85rem; font-size: 0.65rem; }
+  .pass-list     { padding: 0.5rem 0.85rem 0.6rem; gap: 0.4rem; }
+  .pass-item     { font-size: 0.76rem; min-height: 36px; align-items: center; }
+  .pass-item input[type="checkbox"] { width: 20px; height: 20px; }
+
+  /* Toolbar */
+  .toolbar       { gap: 0.4rem; margin-bottom: 0.85rem; }
+  .tool-btn      { padding: 0.38rem 0.75rem; font-size: 0.7rem; min-height: 36px; }
+  .today-chip    { padding: 0.3rem 0.7rem; font-size: 0.68rem; }
+
+  /* Footer: smaller */
+  .footer        { padding: 1.5rem 0.75rem 0; }
+  .footer-quote  { font-size: 0.8rem; }
+  .footer-credit { font-size: 0.67rem; }
+}
+
+/* ── Small Mobile: max 400px ── */
+@media (max-width: 400px) {
+  .header-inner  { padding: 0.6rem 0.75rem 0; }
+  .brand-icon    { width: 28px; height: 28px; font-size: 0.65rem; border-radius: 7px; }
+  .brand-name    { font-size: 0.78rem; }
+  .stat-val      { font-size: 0.85rem; }
+  .stat-pill     { padding: 0.2rem 0.4rem; min-width: 38px; }
+  .header-stats  { gap: 0.25rem; }
+  .container     { padding: 0.75rem 0.65rem 5rem; }
+  .month-hero    { padding: 0.85rem; border-radius: var(--r-sm); }
+  .month-badge   { width: 38px; height: 38px; font-size: 1.1rem; }
+  .month-title   { font-size: 0.85rem; }
+  .week-header   { padding: 0.8rem 0.85rem; }
+  .week-title    { font-size: 0.8rem; }
+  .days-wrap     { padding: 0 0.65rem 0.2rem; }
+  .day-check-zone { width: 44px; }
+  .day-content   { padding: 0.65rem 0.7rem 0.65rem 0; }
+  .task-item     { font-size: 0.74rem; }
+  .resources-wrap { margin: 0.4rem 0.65rem 0.75rem; }
+  .deliverable   { margin: 0.65rem 0.65rem 0.5rem; }
+  .challenge-wrap { margin: 0 0.65rem 0.75rem; }
+  .build-task    { margin: 0.65rem 0.65rem 0.4rem; }
+  .qa-section    { padding: 0 0.65rem 0.5rem; }
+  .pass-section  { margin: 0 0.65rem 0.65rem; }
+  .mob-month-btn { padding: 0.45rem 0.4rem 0.35rem; }
+  .mob-month-icon { width: 28px; height: 28px; border-radius: 8px; font-size: 0.68rem; }
+  .mob-month-label { font-size: 0.56rem; }
+}
+
+/* ── Reduced motion: respect user preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ STICKY HEADER ══ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">AI</div>
+        <div class="brand-text">
+          <div class="brand-name">Harsha → Meeami Audio AI Engineer</div>
+          <div class="brand-sub">12 weeks · No skipped days · CPU laptop + Kaggle/Colab</div>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-pill"><span class="stat-val green" id="sDone">0</span><span class="stat-lbl">Done</span></div>
+        <div class="stat-pill"><span class="stat-val" id="sLeft">0</span><span class="stat-lbl">Left</span></div>
+        <div class="stat-pill"><span class="stat-val amber" id="sStreak">0🔥</span><span class="stat-lbl">Streak</span></div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Overall Progress — 12 weeks to Audio AI Engineer</span>
+        <strong id="pctLabel">0%</strong>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="pctFill"></div>
+      </div>
+    </div>
+
+    <nav class="month-tabs" id="monthTabs" role="tablist"></nav>
+  </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main class="container">
+  <div id="monthSections"></div>
+  <footer class="footer">
+    <p class="footer-quote" id="dailyQuote"></p>
+    <p class="footer-credit">Built for Harsha · Meeami Technologies, Hyderabad · Start date: today · Deadline: 12 weeks</p>
+  </footer>
+</main>
+
+<!-- Mobile bottom nav — Thumb Zone Rule: month switching at thumb reach -->
+<nav class="mobile-bottom-nav" id="mobileNav" role="navigation" aria-label="Month navigation"></nav>
+
+<!-- Week complete toast — Peak-End Rule -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── DATA ──────────────────────────────────────────── */
+const DATA = [
+  {
+    month:1, title:"Python · NumPy · DSP · PyTorch",
+    sub:"Build the entire foundation from zero — 4 weeks, no shortcuts",
+    milestones:["Write Python without looking things up","Load & visualize any audio file","Understand FFT & spectrograms","Train first neural net on Kaggle GPU"],
+    weeks:[
+      {
+        num:1, title:"Python Fundamentals",
+        goal:"Write Python confidently without looking anything up",
+        deliverable:"AudioSignal class on GitHub. First repo created. First public commit. Kaggle account set up.",
+        days:[
+          {label:"Mon",tasks:[["watch","freeCodeCamp Python Full Course — first 2 hours. Variables, strings, numbers, booleans, print, input."],["code","Write 10 programs: temperature converter, FizzBuzz, even/odd checker, name reverser, simple calculator."],["understand","int, float, str, bool. Use type() to check. Conversion: int('5'), str(3.14), float('2.5')."],["practice","if / elif / else: grade classifier — 90+ is A, 80+ is B, 70+ is C, below 70 is F."]]},
+          {label:"Tue",tasks:[["watch","freeCodeCamp — for loops, while loops, break, continue, range()."],["code","Multiplication table for any number. Sum of 1 to N. Find all primes up to 100 using Sieve."],["code","Functions: def, parameters, return, defaults. Write add(a,b), is_palindrome(s), factorial(n)."],["practice","List comprehension: [x**2 for x in range(10) if x%2==0]. Rewrite as a normal for loop first."]]},
+          {label:"Wed",tasks:[["watch","Python lists, tuples, dicts, sets — creation, operations, when to use each."],["code","List: append, insert, remove, sort, reverse, slice. Build a stack with push/pop using a list."],["code","Dict: create, get, update, delete, .items() .keys(). Build a word frequency counter from a string."],["practice","Set: union, intersection, difference. Remove duplicates from a list using set()."]]},
+          {label:"Thu",tasks:[["watch","Python OOP: classes, __init__, self, methods, attributes — full 1-hour tutorial."],["build","BankAccount class: __init__(owner, balance), deposit(amount), withdraw(amount), __repr__."],["build","Add validation: withdraw raises ValueError if amount > balance. Test it with try/except."],["understand","Instance vs class attributes. Create two BankAccount objects, verify they are independent."]]},
+          {label:"Fri",tasks:[["code","File I/O: open(), read(), write(), with statement. Read a .txt file line by line, print with line numbers."],["code","Exception handling: try / except / finally. Handle FileNotFoundError, ValueError, ZeroDivisionError."],["code","Modules: import math, os, sys. Use os.path.exists(), os.listdir(), math.sqrt(), math.pi."],["practice","Script that reads all .py files in a folder and counts total lines across all of them."]]},
+          {label:"Sat",tasks:[["build","Complete Calculator class: add, subtract, multiply, divide, power, sqrt. Handle every edge case."],["build","word_frequency(text) → dict sorted by count descending. Test on a paragraph of text."],["push","Create GitHub account. Create repo: audio-ai-journey. Push week1/ with all your scripts."],["push","Write README.md: 'Week 1 — Python basics.' One sentence per script explaining what it does."]]},
+          {label:"Sun",tasks:[["build","AudioSignal class: __init__(filepath), .filename property, .extension property, .info() prints both."],["build","Add .supported_formats() static method → ['.wav','.mp3','.flac']. Add __repr__."],["push","Push AudioSignal with test_audio_signal.py that creates 3 objects and calls .info() on each."],["kaggle","Sign up on Kaggle. Start 'Python' micro-course. Complete first 3 exercises in-browser."],["practice","Open Google Colab. Create a notebook. Run your Calculator class there to verify it works."]]}
+        ],
+        resources:[
+          {type:"yt",  label:"freeCodeCamp Python Full Course (4.5h)",sub:"The single best beginner Python video",url:"https://www.youtube.com/watch?v=rfscVS0vtbw"},
+          {type:"book",label:"Automate the Boring Stuff — Free Online",sub:"Practical projects for Python beginners",url:"https://automatetheboringstuff.com/"},
+          {type:"kg",  label:"Kaggle Python Micro-Course",sub:"Interactive in-browser exercises, free",url:"https://www.kaggle.com/learn/python"},
+          {type:"blog",label:"W3Schools Python Exercises",sub:"Quick reference and practice problems",url:"https://www.w3schools.com/python/exercise.asp"},
+          {type:"gh",  label:"Your GitHub — create this week",sub:"audio-ai-journey — push every script here",url:"https://github.com"}
+        ]
+      },
+      {
+        num:2, title:"NumPy + First Audio Contact",
+        goal:"Load, visualize, and describe any audio file in Python",
+        deliverable:"audio_explorer.py CLI tool + first HuggingFace Space live (upload WAV → waveform + mel-spec).",
+        days:[
+          {label:"Mon",tasks:[["watch","freeCodeCamp NumPy tutorial — first 1.5 hours. Array creation, dtypes, shapes, reshape, slicing."],["code","np.array, np.zeros, np.ones, np.arange, np.linspace, np.random.randn. Print each shape."],["understand","Broadcasting: (3,1)+(1,4) gives (3,4). Write 5 examples. When does broadcasting fail?"],["practice","Array math: +,-,*,/. Dot product with @. np.sum(axis=0) vs axis=1 — print both and compare."]]},
+          {label:"Tue",tasks:[["code","Boolean masking: arr[arr>0.5]. Fancy indexing: arr[[0,2,4]]. Slicing: arr[::2, 1:3]."],["code","np.concatenate, np.stack, np.vstack, np.hstack. np.reshape vs .flatten(). Print shape after each."],["build","From scratch: dot_product(a,b), l2_norm(v), cosine_similarity(a,b). Verify against numpy."],["practice","Find a NumPy exercise notebook on Kaggle. Run through 20 problems."]]},
+          {label:"Wed",tasks:[["watch","Matplotlib basics (30 min) — pyplot, figure/axes, subplots, savefig."],["code","Plot sine wave: t=np.linspace(0,2*np.pi,1000), y=np.sin(2*np.pi*440*t). Label axes, title, grid."],["build","2×2 subplot: (1) 440Hz sine (2) square wave (3) sawtooth (4) random noise. Different color each."],["code","plt.savefig('plots/waves.png', dpi=150). Open and verify the PNG looks correct."]]},
+          {label:"Thu",tasks:[["code","pip install librosa soundfile matplotlib scipy. Run: import librosa; print(librosa.__version__)."],["code","y, sr = librosa.load('any_wav.wav', sr=16000). Print y.shape and sr. Plot waveform."],["watch","YouTube: 'Introduction to Librosa: Audio Waveforms & Spectrograms in Python' (20 min)."],["understand","What is sample rate? Why 16000Hz for speech? y.shape[0] / sr = duration in seconds."]]},
+          {label:"Fri",tasks:[["code","librosa.feature.melspectrogram(y=y, sr=sr, n_mels=80). Plot with librosa.display.specshow."],["code","librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13). Plot it. Understand: DCT of log mel = MFCC."],["code","librosa.feature.spectral_centroid(y=y, sr=sr). librosa.feature.zero_crossing_rate(y). Print means."],["understand","Print these features for clean speech AND noisy audio. What changes between them?"]]},
+          {label:"Sat",tasks:[["build","Compare clean vs noisy: load both, 2×2 grid — waveform + mel-spectrogram for each side by side."],["build","compute_stats(wav_path) → dict: {duration_s, rms_db, spectral_centroid_hz, zcr_mean}."],["push","Push week2/. README shows output plots as embedded images using ![alt](plots/wave.png) syntax."],["practice","Download one clean speech and one noisy file from freesound.org. These are your test files."]]},
+          {label:"Sun",tasks:[["build","audio_explorer.py: takes WAV path, saves 4 plots (waveform, mel-spec, MFCC, FFT magnitude), prints stats."],["deploy","Create HuggingFace account. Build a Gradio Space: upload WAV → shows waveform + mel-spectrogram."],["deploy","Space name: harsha-audio-explorer. Make it public. Test with 3 different audio files."],["push","Push week2/ to GitHub. Add HuggingFace Space link to README. This is your first public demo."]]}
+        ],
+        resources:[
+          {type:"yt",  label:"freeCodeCamp NumPy Tutorial (1h)",sub:"Complete NumPy for absolute beginners",url:"https://www.youtube.com/watch?v=QUT1VHiLmmI"},
+          {type:"yt",  label:"Librosa: Audio Waveforms & Spectrograms",sub:"20-min intro to librosa for ML",url:"https://www.youtube.com/watch?v=mUeRxXwtZAs"},
+          {type:"blog",label:"Audio Signal Processing with Librosa",sub:"Comprehensive librosa tutorial blog",url:"https://daehnhardt.com/blog/2023/03/05/python-audio-signal-processing-with-librosa/"},
+          {type:"hf",  label:"HuggingFace Spaces — Deploy your demo",sub:"Where all your demos will live, free",url:"https://huggingface.co/spaces"},
+          {type:"blog",label:"Gradio Quickstart",sub:"Build and deploy ML demo apps in minutes",url:"https://www.gradio.app/guides/quickstart"}
+        ]
+      },
+      {
+        num:3, title:"Digital Signal Processing",
+        goal:"Understand FFT, STFT, mel scale, filters — explain each without notes",
+        deliverable:"DSP visualizer: any WAV → 4 plots saved as PNG. Updated HuggingFace Space. GitHub pushed.",
+        days:[
+          {label:"Mon",tasks:[["read","Think DSP ch 1–2 (free book). What is a signal, sampling theorem, Nyquist rate, aliasing."],["build","Aliasing demo: generate 7000Hz sine, sample at 8000Hz. Plot — it should appear as 1000Hz."],["understand","Nyquist: max representable frequency = sample_rate / 2. Phone = 8kHz → max 4kHz audio."],["code","Generate signals at 8kHz, 16kHz, 44.1kHz. Save as WAV. Compare file sizes in bytes."]]},
+          {label:"Tue",tasks:[["watch","Valerio Velardo — 'Fourier Transform for Audio' (Sound of AI YouTube playlist)."],["understand","DFT formula: X[k] = Σ x[n] · e^(−j2πkn/N). Magnitude = √(real² + imag²)."],["code","np.fft.fft on a 440Hz sine. Plot magnitude. Verify the spike is at the right frequency bin."],["code","Brute-force DFT from scratch on 64 samples. Compare output to np.fft.fft — must match."]]},
+          {label:"Wed",tasks:[["watch","Valerio Velardo — 'Short-Time Fourier Transform Explained' (Sound of AI)."],["understand","STFT: slice audio into overlapping frames → window function → FFT each frame → stack into spectrogram."],["code","librosa.stft(y, n_fft=2048, hop_length=512). Print shape. Plot magnitude spectrogram."],["understand","n_fft controls frequency resolution. hop_length controls time resolution. Trade-off between them."]]},
+          {label:"Thu",tasks:[["watch","Valerio Velardo — 'Mel Spectrograms Explained' + 'MFCCs Explained'."],["understand","Mel scale: 2595 × log₁₀(1 + f/700). Humans hear pitch logarithmically, not linearly."],["code","Implement hz_to_mel(f) and mel_to_hz(m). Verify with librosa.hz_to_mel(1000)."],["understand","MFCC: log mel-spectrogram → DCT → 13 decorrelated coefficients. Speech recognition standard."]]},
+          {label:"Fri",tasks:[["watch","WolfSound YouTube — 'How to Plot Audio Spectrogram for Machine Learning'."],["understand","Window functions: Hamming/Hanning taper frame edges to zero → prevents spectral leakage."],["code","Plot Hamming, Hanning, Blackman in time domain. See how they taper the edges."],["build","FIR low-pass filter: scipy.signal.firwin(numtaps=101, cutoff=0.25). Apply with np.convolve. Listen."]]},
+          {label:"Sat",tasks:[["code","Add white noise to clean speech at 0dB SNR. Scale noise so noise_rms equals signal_rms."],["code","Compute SNR: 20 × log₁₀(signal_rms / noise_rms). Verify before and after adding noise."],["build","Side-by-side: clean / noisy / low-pass filtered waveforms and spectrograms in one figure."],["push","Push week3/dsp_fundamentals/. Include output PNG so it shows inline on GitHub."]]},
+          {label:"Sun",tasks:[["build","dsp_visualizer.py: python dsp_visualizer.py --input audio.wav → saves 4 plots as PNG files."],["build","Plots: (1) waveform (2) FFT magnitude (3) mel-spectrogram (4) MFCCs. All axes labeled."],["deploy","Update HuggingFace Space: now shows all 4 plots for any uploaded WAV."],["push","Push. README shows example input WAV and all 4 output plots as images."]]}
+        ],
+        resources:[
+          {type:"yt",  label:"Sound of AI — Audio Signal Processing Playlist",sub:"Valerio Velardo — the best audio ML YouTube channel",url:"https://www.youtube.com/playlist?list=PL-wATfeyAMNqIee7cH3q1bh4QJFAaeNv0"},
+          {type:"book",label:"Think DSP — Free Book (Allen Downey)",sub:"Best free DSP textbook with Python examples",url:"https://greenteapress.com/wp/think-dsp/"},
+          {type:"blog",label:"WolfSound — Spectrogram for ML Tutorial",sub:"Clear step-by-step guide with librosa",url:"https://thewolfsound.com/how-to-plot-audio-spectrogram-for-machine-learning-magnitude-stft-of-audio-signal-with-python-librosa-and-matplotlib/"},
+          {type:"yt",  label:"Audio Spectrogram Tutorial (WolfSound YouTube)",sub:"Step-by-step in Python with librosa",url:"https://www.youtube.com/watch?v=6nLx1Zqmkuw"},
+          {type:"book",label:"DSP Guide — Steven Smith (Free)",sub:"Classic DSP textbook, fully free online",url:"https://www.dspguide.com/"}
+        ]
+      },
+      {
+        num:4, title:"PyTorch Fundamentals",
+        goal:"Build, train, evaluate and save a neural network from scratch on Kaggle GPU",
+        deliverable:"Speech vs Noise classifier — >90% accuracy, trained on Kaggle GPU, deployed on HuggingFace.",
+        days:[
+          {label:"Mon",tasks:[["watch","learnpytorch.io Chapter 0 — PyTorch Fundamentals. Tensors, shapes, dtypes, devices."],["code","Create tensors from list, numpy, random. .shape .dtype .device. Math: + - * @ torch.matmul."],["code","Reshape: .view() .reshape() .squeeze() .unsqueeze() .permute(). Print shape before and after each."],["kaggle","Kaggle: new notebook → Settings → Accelerator → GPU T4. Run: torch.cuda.is_available(). Should be True."]]},
+          {label:"Tue",tasks:[["watch","learnpytorch.io Chapter 1 — Autograd. requires_grad, backward(), grad, no_grad context."],["code","x = torch.tensor(2.0, requires_grad=True). y = x**2 + 3*x + 5. y.backward(). x.grad should be 7.0."],["understand","Computational graph: every operation creates a node. backward() walks from output back to inputs."],["code","Manual forward/backward without nn.Module: W = randn(3,2, requires_grad=True). Compute loss. backward. Update W."]]},
+          {label:"Wed",tasks:[["watch","learnpytorch.io Chapter 2 — nn.Module, loss functions, optimizers."],["build","SimpleNet(nn.Module): Linear(in, hidden)+ReLU+Linear(hidden, out). forward(x) runs the computation."],["code","Loss: nn.CrossEntropyLoss(). Optimizer: torch.optim.Adam(model.parameters(), lr=1e-3)."],["code","Training step: zero_grad() → output=model(x) → loss=criterion(output,y) → loss.backward() → step()"]]},
+          {label:"Thu",tasks:[["watch","learnpytorch.io — Dataset and DataLoader chapter."],["build","AudioDataset(Dataset): __init__ takes folder, __len__ returns count, __getitem__ loads WAV → mel-spec tensor."],["code","DataLoader(ds, batch_size=32, shuffle=True). for X,y in loader: print(X.shape, y.shape); break."],["kaggle","Find MUSAN dataset on Kaggle or create 2 folders: speech/ and noise/ with short WAV clips."]]},
+          {label:"Fri",tasks:[["build","Training loop: for epoch in range(50): train batches → validate → print loss + accuracy every 10."],["build","Validation: model.eval(), with torch.no_grad(): val_loss, val_accuracy. Then model.train()."],["build","torch.save(model.state_dict(), 'model.pt'). model.load_state_dict(torch.load('model.pt')). Verify."],["understand","Overfitting: val loss rises while train loss falls. Fix: weight_decay=1e-4 in Adam optimizer."]]},
+          {label:"Sat",tasks:[["build","Confusion matrix, per-class accuracy. Plot train vs val loss curves per epoch."],["build","predict.py --input voice.wav → prints 'SPEECH (92.3%)' or 'NOISE (87.1%)'"],["push","Push week4/audio_classifier/ with model.pt, train.py, predict.py, plots/. README with accuracy."],["kaggle","Kaggle notebook: paste full code, GPU on, run training, download model.pt."]]},
+          {label:"Sun",tasks:[["kaggle","Full training run on Kaggle GPU. Target: >90% accuracy. Download best model.pt."],["deploy","HuggingFace Space: upload WAV → model predicts SPEECH or NOISE with confidence score."],["push","GitHub + HF Space updated. README: architecture, dataset, accuracy number, demo link."],["watch","Valerio Velardo 'Deep Learning for Audio' playlist — first 3 videos. Month 2 prep."]]}
+        ],
+        resources:[
+          {type:"blog",label:"learnpytorch.io — Daniel Bourke",sub:"The best free PyTorch course, notebook-based",url:"https://www.learnpytorch.io/"},
+          {type:"yt",  label:"PyTorch for Deep Learning — Full Course",sub:"Daniel Bourke's complete YouTube course",url:"https://www.youtube.com/watch?v=Z_ikDlimN6A"},
+          {type:"yt",  label:"Aladdin Persson — PyTorch Tutorials",sub:"Clean, practical implementations to follow",url:"https://www.youtube.com/playlist?list=PLhhyoLH6IjfxeoooqP9rhU3HJIAVAJ3Vz"},
+          {type:"kg",  label:"PyTorch Tutorial for DL Lovers (Kaggle)",sub:"Run in-browser with free GPU",url:"https://www.kaggle.com/code/kanncaa1/pytorch-tutorial-for-deep-learning-lovers"},
+          {type:"blog",label:"PyTorch Official Tutorials",sub:"Beginner to advanced, well-documented",url:"https://pytorch.org/tutorials/"}
+        ]
+      }
+    ]
+  },
+  {
+    month:2, title:"Audio AI Core — Speech Enhancement",
+    sub:"Train real denoising models. Deploy working demos. These are Meeami's products.",
+    milestones:["VoiceBank+DEMAND pipeline built","First denoiser trained & scored","WSR-MGAN components implemented","Live HuggingFace demo deployed"],
+    weeks:[
+      {
+        num:5, title:"TorchAudio + Speech Data Pipeline",
+        goal:"Build a production-ready loader for paired noisy/clean speech",
+        deliverable:"DataLoader for VoiceBank+DEMAND. Kaggle notebook with 20-sample visualization. Published publicly.",
+        days:[
+          {label:"Mon",tasks:[["watch","Real Python TorchAudio tutorial. Then: torchaudio official transforms docs overview."],["code","torchaudio.load('audio.wav') → waveform tensor [channels, samples] and sample_rate. Print both."],["code","torchaudio.transforms.Resample(orig_freq=44100, new_freq=16000). Apply and verify new shape."],["code","torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_fft=512, hop_length=256, n_mels=80)."]]},
+          {label:"Tue",tasks:[["watch","Valerio Velardo — 'Data Augmentation for Audio' (Sound of AI YouTube)."],["code","AddNoise: randomly add Gaussian noise at 5–20dB SNR during training. Never during validation."],["code","torchaudio.transforms.FrequencyMasking(freq_mask_param=15). Apply to a mel-spec tensor."],["understand","Why augment? Model must handle variability. Never augment val/test — that corrupts the metric."]]},
+          {label:"Wed",tasks:[["build","SpeechEnhancementDataset(Dataset): scans noisy/ and clean/ folders, matches pairs by filename."],["build","__getitem__: load both WAVs, resample to 16kHz, normalize by peak amplitude, return (noisy_t, clean_t)."],["build","Pad/trim to fixed 4 seconds (64000 samples). Shorter files: zero-pad right. Longer files: crop."],["code","Test: ds[0][0].shape and ds[0][1].shape must both be torch.Size([1, 64000])."]]},
+          {label:"Thu",tasks:[["kaggle","Kaggle: search 'VoiceBank DEMAND' dataset. Add to notebook. Explore: what is in noisy/ and clean/?"],["code","Count files. Verify all noisy files have a matching clean counterpart. Print 5 filename pairs."],["code","Load one pair. Plot waveform overlay (noisy=red, clean=blue) + mel-spectrogram side by side."],["understand","VoiceBank: 28 speakers from VCTK corpus. DEMAND: 18 different noise environments. Mixed at 0–15dB SNR."]]},
+          {label:"Fri",tasks:[["build","DataLoader: batch_size=8, shuffle=True, num_workers=2. Iterate one batch. Print shapes."],["build","Normalization stats: compute mean + std of noisy mel-specs across 100 samples. Apply: (x−mean)/std."],["code","Time one full epoch: should be under 60 seconds on Kaggle. If slow, increase num_workers."],["push","Push data_pipeline.py. README explains dataset download steps clearly."]]},
+          {label:"Sat",tasks:[["build","Visualization notebook: 20 noisy+clean pairs in a 4-column grid (waveforms + spectrograms)."],["understand","Can you see noise on the spectrogram? Broadband noise covers all frequencies as static texture."],["push","Push week5/. Add Kaggle notebook link to README."],["read","Read WSR-MGAN abstract + introduction at arxiv.org/abs/2405.16834. What problem does it solve?"]]},
+          {label:"Sun",tasks:[["kaggle","Full Kaggle notebook: pipeline + visualizations + dataset statistics. Save and publish publicly."],["kaggle","Add the public Kaggle notebook link to your GitHub README."],["watch","Sound of AI 'Deep Learning for Audio' playlist — videos 4–6. Building toward Week 6."],["practice","LeetCode: 3 easy problems in Python. Two Sum, Valid Parentheses, Reverse String."]]}
+        ],
+        resources:[
+          {type:"blog",label:"Real Python — TorchAudio Tutorial",sub:"Comprehensive, practical guide",url:"https://realpython.com/python-torchaudio/"},
+          {type:"blog",label:"TorchAudio Official Docs & Tutorials",sub:"All transforms with code examples",url:"https://pytorch.org/audio/stable/tutorials/"},
+          {type:"kg",  label:"VoiceBank+DEMAND Dataset on Kaggle",sub:"The benchmark dataset you will train on",url:"https://www.kaggle.com/datasets/jiangwq666/voicebank-demand/data"},
+          {type:"yt",  label:"Sound of AI — Deep Learning for Audio Playlist",sub:"Valerio Velardo, complete series",url:"https://www.youtube.com/playlist?list=PL-wATfeyAMNrtbkCNsLcpoAyBBRJZVlnf"},
+          {type:"gh",  label:"musikalkemist GitHub (Valerio Velardo)",sub:"Code for all Sound of AI videos",url:"https://github.com/musikalkemist"}
+        ]
+      },
+      {
+        num:6, title:"First Speech Enhancement Model",
+        goal:"Train a denoiser that measurably improves PESQ and STOI scores",
+        deliverable:"Trained model. PESQ > 2.3. STOI > 0.88. Kaggle notebook published. HF Space updated.",
+        days:[
+          {label:"Mon",tasks:[["watch","U-Net architecture on YouTube. Understand: encoder compresses, decoder expands, skip connections."],["build","SimpleEncoder: 3× Conv1d, each doubles channels and halves time length (stride=2). [B,1,T]→[B,256,T/8]."],["build","SimpleDecoder: 3× ConvTranspose1d to upsample back. Output shape must match input shape exactly."],["code","Test encoder + decoder shapes before adding skip connections. Fix any shape errors first."]]},
+          {label:"Tue",tasks:[["build","Skip connections: concatenate each encoder layer output to matching decoder layer input."],["build","SimpleEnhancer(nn.Module): encoder + bottleneck + decoder with skips. Noisy in → clean estimate out."],["code","x = torch.randn(2, 1, 64000). out = model(x). out.shape must be torch.Size([2, 1, 64000])."],["code","Count parameters: sum(p.numel() for p in model.parameters()). Target: 500K–2M params."]]},
+          {label:"Wed",tasks:[["build","L1 loss: torch.mean(torch.abs(predicted − clean))."],["build","SI-SNR loss: scale-invariant signal-to-noise ratio. Look up formula, implement it yourself."],["code","Combined loss: total = 0.5 × l1_loss + 0.5 × (1 − si_snr/30). Tune the balance."],["understand","L1 handles absolute values. SI-SNR handles perceptual quality. Both together = better training."]]},
+          {label:"Thu",tasks:[["kaggle","Kaggle GPU: paste full code. Run 5 epochs to verify no shape errors. Fix everything first."],["code","Full training: 30 epochs. Log train_loss each epoch. Save checkpoint when val_loss improves."],["code","!pip install pesq pystoi. pesq(fs=16000, ref=clean_np, deg=enhanced_np, mode='wb')."],["understand","PESQ range: 1.0 (worst) to 4.5 (best). Noisy baseline ≈ 1.97. Your model should reach ~2.3."]]},
+          {label:"Fri",tasks:[["kaggle","Full 30-epoch run on Kaggle GPU. Download best_model.pt after training."],["build","enhance.py: --input noisy.wav --output enhanced.wav --model model.pt (command-line tool)."],["code","Evaluate all 824 VoiceBank test files. Print: mean PESQ ± std and mean STOI ± std."],["understand","Record your exact numbers. These are YOUR baseline. You will beat them in Week 7."]]},
+          {label:"Sat",tasks:[["build","Listen to 10 enhanced samples. Write: what improved? What is still wrong? Be specific."],["build","3-sample visualization: noisy / enhanced / clean spectrograms side by side. See the denoising."],["push","Push week6/speech_enhancer/. README has PESQ/STOI table. Architecture described."],["read","Read WSR-MGAN sections 2–3 on architecture. Draw encoder/Res2Net/SE/GRU/decoder by hand."]]},
+          {label:"Sun",tasks:[["kaggle","Publish Kaggle notebook publicly: full training + evaluation + visualizations."],["deploy","Update HuggingFace Space: noisy WAV → enhanced WAV + spectrogram comparison + PESQ score."],["push","GitHub README: before/after spectrogram images + metrics table."],["practice","LeetCode: 3 easy problems. Arrays and strings focus."]]}
+        ],
+        resources:[
+          {type:"gh",  label:"vbelz/Speech-Enhancement (GitHub)",sub:"Clean PyTorch speech enhancer — read this code",url:"https://github.com/vbelz/Speech-enhancement"},
+          {type:"gh",  label:"SpeechBrain (GitHub)",sub:"Full audio AI toolkit, study the examples",url:"https://github.com/speechbrain/speechbrain"},
+          {type:"hf",  label:"SpeechBrain SE Model on HuggingFace",sub:"See how a real model card is structured",url:"https://huggingface.co/speechbrain/sepformer-wham-enhancement"},
+          {type:"hf",  label:"HuggingFace Audio Course — Free",sub:"Audio data, tasks, transformer models",url:"https://huggingface.co/learn/audio-course/chapter0/introduction"},
+          {type:"paper",label:"WSR-MGAN Paper — arxiv:2405.16834",sub:"The architecture you are building toward",url:"https://arxiv.org/abs/2405.16834"}
+        ]
+      },
+      {
+        num:7, title:"Build WSR-MGAN Style Model",
+        goal:"Implement Res2Net + Squeeze-Excitation + GRU. Beat your Week 6 PESQ by 0.3+",
+        deliverable:"WSR-MGAN trained. Ablation table (Res2 vs SE vs GRU vs all) in README. GitHub pushed.",
+        days:[
+          {label:"Mon",tasks:[["read","Read WSR-MGAN paper fully (arxiv.org/abs/2405.16834). Read every section. Draw architecture on paper."],["understand","Res2Net: split channels into S groups → hierarchical convolutions → merge. Captures multi-scale features."],["understand","Squeeze-Excitation: global avg pool → FC shrink → ReLU → FC expand → Sigmoid → scale channels."],["understand","GRU: carries memory across time. bidirectional=False = causal = only past context. Required for real-time."]]},
+          {label:"Tue",tasks:[["build","Res2Block(nn.Module): in_channels, scale=4. Split into groups, conv each, add hierarchically, merge."],["code","block = Res2Block(64). x = torch.randn(2,64,1000). block(x).shape must be [2,64,1000]."],["build","ResLayer: stack 3 Res2Blocks with residual: out = layer(x) + x. Test shape."],["push","Push res2block.py standalone module with unit test."]]},
+          {label:"Wed",tasks:[["build","SEBlock(nn.Module): global avg pool → Linear(C, C//16) → ReLU → Linear(C//16, C) → Sigmoid → multiply."],["code","se = SEBlock(64). x = randn(2,64,1000). se(x).shape must be [2,64,1000]."],["build","Res2SEBlock: Res2Block output → SEBlock. This combined block is the core of WSR-MGAN."],["code","Test combined block shape. Push se_block.py and res2se_block.py."]]},
+          {label:"Thu",tasks:[["build","GRU bottleneck: encoder output [B,C,T] → reshape [B,T,C] → GRU(C, C//2, batch_first=True) → reshape back."],["code","Verify: GRU output shape is [B,T,C//2]. Add Linear to project back to C. Test."],["build","WSREnhancer: encoder (Res2SE) → GRU → decoder (ConvTranspose+Res2SE) + skip connections."],["code","End-to-end test. Count parameters. Target 1M–3M."]]},
+          {label:"Fri",tasks:[["kaggle","Train WSREnhancer on Kaggle GPU. 30 epochs. Log PESQ+STOI per epoch."],["code","Compare PESQ vs your Week 6 baseline. Did it improve? By exactly how much?"],["build","Ablation: train 5 variants (baseline, +Res2, +SE, +GRU, all) for 10 epochs each on Kaggle."],["push","Results table in README: rows=variant, columns=PESQ, STOI, param count."]]},
+          {label:"Sat",tasks:[["build","Full evaluation: all 824 VoiceBank+DEMAND test files. Report mean ± std PESQ and STOI."],["build","Listen to 10 samples. Compare with Week 6 output. Write specific observations."],["push","week7/wsr_model/ — architecture code, training script, results. ARCHITECTURE.md with diagram."],["practice","LeetCode: 3 medium problems. Sliding window, two pointers."]]},
+          {label:"Sun",tasks:[["kaggle","Publish Kaggle notebook: full WSR-MGAN training + ablation results. Public."],["build","ARCHITECTURE.md: each block explained in your own words. Photo of hand-drawn diagram embedded."],["push","Main README: Week 7 section with diagram and results table."],["read","Read CheapNET abstract (arxiv.org/abs/2311.15959). What is the 'projected loss' idea?"]]}
+        ],
+        resources:[
+          {type:"paper",label:"WSR-MGAN Full PDF — arxiv:2405.16834",sub:"The paper you are implementing this week",url:"https://arxiv.org/pdf/2405.16834"},
+          {type:"paper",label:"CheapNET — arxiv:2311.15959",sub:"Lightweight SE — your next direction",url:"https://arxiv.org/abs/2311.15959"},
+          {type:"gh",  label:"DeepFilterNet (GitHub)",sub:"SOTA speech enhancer — study the architecture",url:"https://github.com/Rikorose/DeepFilterNet"},
+          {type:"gh",  label:"microsoft/DNS-Challenge",sub:"DNS dataset scripts and baselines",url:"https://github.com/microsoft/DNS-Challenge"},
+          {type:"yt",  label:"Aladdin Persson — How to Implement Papers",sub:"Exactly what you're doing this week",url:"https://www.youtube.com/c/AladdinPersson"}
+        ]
+      },
+      {
+        num:8, title:"Evaluation + Full HuggingFace Deployment",
+        goal:"Publish a polished live demo the Meeami team can open and test right now",
+        deliverable:"HuggingFace Space live: noisy WAV → enhanced WAV + PESQ before/after. Clean model card.",
+        days:[
+          {label:"Mon",tasks:[["code","Clone Microsoft DNSMOS repo. Download ONNX model. Run on your enhanced audio samples."],["understand","DNSMOS: P.808 overall MOS score (1–5). Noisy speech ≈ 2.5. Your enhanced should be > 3.0."],["code","Run DNSMOS on noisy input AND enhanced output. Print the improvement delta."],["push","Add DNSMOS results to README."]]},
+          {label:"Tue",tasks:[["build","enhance.py CLI: --input noisy.wav --output enhanced.wav --model model.pt as proper argparse flags."],["build","Print: PESQ before, PESQ after, STOI before, STOI after, inference time ms, model size MB."],["code","RTF = inference_time_sec / audio_duration_sec. Must be < 1.0 on CPU."],["understand","RTF < 1.0 means faster than real-time. Meeami needs RTF << 1.0 on embedded DSP chips."]]},
+          {label:"Wed",tasks:[["build","Gradio app: gr.Audio input, gr.Audio output, gr.Plot for spectrograms, gr.Textbox for scores."],["build","app.py with gr.Blocks layout. Test locally: python app.py → browser opens at localhost:7860."],["build","Add 3 example noisy WAV files. Users can test without uploading their own files."],["code","Clean error handling: wrong format, too long audio, model load failure — all show a friendly message."]]},
+          {label:"Thu",tasks:[["deploy","HuggingFace model repo: harsha/speech-enhancer. Upload model.pt + config.json."],["deploy","Model card: architecture, training data, PESQ/STOI/DNSMOS scores, example inference code."],["deploy","Push Gradio Space to HuggingFace Spaces. Test it. Open it on your phone too."],["push","GitHub: HuggingFace Spaces badge + demo link in README header."]]},
+          {label:"Fri",tasks:[["build","Test Space on 10 different audio files: quiet speech, loud noise, music background, reverberant room."],["build","Document failures honestly in model card. What can your model not handle? Be truthful."],["build","Fix any Gradio bugs. Make the UI clean — a Meeami engineer will open this link."],["practice","LeetCode: 3 medium problems."]]},
+          {label:"Sat",tasks:[["build","RESULTS.md: Problem → Approach → Architecture → Training → Metrics → Limitations → Next steps."],["build","This document is your interview asset. Make it technical, honest, and clear."],["push","Push everything. Clean commit history. Descriptive commit messages."],["understand","Month 2 self-check. Say out loud without notes: PESQ? STOI? GRU purpose? RTF? All four."]]},
+          {label:"Sun",tasks:[["build","Month 2 milestone: 3+ HF Spaces live, 2 trained models, 8 GitHub repos. Verify everything works."],["build","Internal: casually mention to one Meeami colleague you've been learning audio AI. Show Space if asked."],["watch","Month 3 prep: watch 'ONNX Runtime explained' + 'Model Quantization basics' on YouTube."],["practice","Revise on paper without looking: definitions of FFT, STFT, mel scale, PESQ, STOI, SNR, RTF."]]}
+        ],
+        resources:[
+          {type:"gh",  label:"Microsoft DNSMOS (GitHub)",sub:"Automated MOS speech quality scoring tool",url:"https://github.com/microsoft/DNS-Challenge/tree/master/DNSMOS"},
+          {type:"hf",  label:"Resemble Enhance — HF Space Demo",sub:"Study how a professional SE demo is built",url:"https://huggingface.co/spaces/ResembleAI/resemble-enhance"},
+          {type:"hf",  label:"HuggingFace Audio-to-Audio Task Docs",sub:"How to structure SE models on HuggingFace",url:"https://huggingface.co/tasks/audio-to-audio"},
+          {type:"blog",label:"Gradio Docs — Audio Component",sub:"gr.Audio, gr.Blocks layout guide",url:"https://www.gradio.app/docs/gradio/audio"},
+          {type:"hf",  label:"HuggingFace Audio Course — Chapter 1",sub:"Audio data fundamentals from HF team",url:"https://huggingface.co/learn/audio-course/chapter1/audio_data"}
+        ]
+      }
+    ]
+  },
+  {
+    month:3, title:"Edge Deployment · Portfolio · Get the Job",
+    sub:"Optimize for devices. Polish every project. Walk into the interview ready.",
+    milestones:["ONNX INT8 running on CPU","C++ inference wrapper built","Portfolio on GitHub + HF complete","Interview secured"],
+    weeks:[
+      {
+        num:9, title:"ONNX Export + Quantization",
+        goal:"Run your model on CPU in real-time with minimal quality loss",
+        deliverable:"Benchmark table: FP32 PyTorch vs ONNX FP32 vs ONNX INT8. Size + latency + PESQ. GitHub.",
+        days:[
+          {label:"Mon",tasks:[["watch","YouTube: 'Deploying PyTorch models with ONNX Runtime' — any clear tutorial (15–30 min)."],["code","torch.onnx.export(model, dummy, 'model.onnx', opset_version=17, input_names=['noisy'], output_names=['enhanced'])."],["code","onnx.load + onnx.checker.check_model(model). No output printed = valid ONNX model."],["code","Compare PyTorch vs ONNX output on same input: np.allclose(pt_out, onnx_out, atol=1e-4). Must be True."]]},
+          {label:"Tue",tasks:[["code","ort.InferenceSession('model.onnx'). Run inference on dummy input. Verify output shape."],["build","Latency benchmark: 100 inferences of 4-second audio. time.perf_counter(). Mean ± std ms."],["code","Compare: PyTorch CPU time vs ONNX Runtime time. Expect ONNX ~1.5–3× faster on CPU."],["push","benchmark.py that runs both and prints a formatted comparison table."]]},
+          {label:"Wed",tasks:[["code","from onnxruntime.quantization import quantize_dynamic, QuantType"],["code","quantize_dynamic('model.onnx', 'model_int8.onnx', weight_type=QuantType.QInt8)"],["code","Print file sizes: os.path.getsize for both. INT8 should be ~4× smaller than FP32."],["code","Run INT8 model. Compute PESQ on 50 test files. Compare vs FP32. Note the quality drop."]]},
+          {label:"Thu",tasks:[["build","Benchmark table: Model | Size MB | Latency ms | PESQ | STOI. Rows: PyTorch-FP32, ONNX-FP32, ONNX-INT8."],["understand","INT8: edge DSP chips (ARM Cortex, Qualcomm Hexagon). FP16: GPU inference. FP32: training only."],["understand","Quality drop from INT8 is the cost. Speed and size gain is the benefit. Meeami's products live here."],["push","Push week9/edge_deployment/ with all benchmark code and table in README."]]},
+          {label:"Fri",tasks:[["build","Make model causal: no future-context in convolutions. Use causal padding manually."],["understand","Non-causal: conv sees future frames. Real-time: you only have the past. Remove all future context."],["code","Test: process 10-second file frame by frame (320 samples each). Output must be continuous."],["push","causal_model.py. README notes PESQ cost of causal vs non-causal."]]},
+          {label:"Sat",tasks:[["build","Streaming inference: process 320-sample chunks. Maintain GRU hidden state across chunks."],["code","enhance_stream(chunk_np, hidden_state) → (enhanced_chunk_np, new_hidden_state). Test in a loop."],["build","Verify: streaming vs batch on same file → outputs nearly identical (np.allclose)."],["push","streaming_infer.py. Update README with RTF number."]]},
+          {label:"Sun",tasks:[["deploy","Update HuggingFace Space to use ONNX INT8 model. Faster loading, faster inference."],["build","Update model card: benchmark table, causal architecture note, ONNX deployment instructions."],["push","GitHub week9/ complete. README has edge deployment section."],["practice","LeetCode: 3 medium. Binary search, linked lists."]]}
+        ],
+        resources:[
+          {type:"blog",label:"ONNX Runtime — Getting Started (Python)",sub:"Official guide to ONNX export and inference",url:"https://onnxruntime.ai/docs/get-started/with-python.html"},
+          {type:"blog",label:"PyTorch ONNX Export — Official Tutorial",sub:"torch.onnx.export docs and examples",url:"https://pytorch.org/docs/stable/onnx.html"},
+          {type:"blog",label:"ONNX Runtime Quantization Guide",sub:"INT8 quantization step by step",url:"https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html"},
+          {type:"yt",  label:"MIT Efficient Deep Learning Course",sub:"Quantization, pruning, edge deployment theory",url:"https://www.youtube.com/playlist?list=PLSrTvUm384I9PV10oi68jqkZKXcPy5u0"},
+          {type:"paper",label:"Dual-Stage Low-Complexity SE — arxiv:2105.07632",sub:"Low-complexity SE from Meeami domain",url:"https://arxiv.org/abs/2105.07632"}
+        ]
+      },
+      {
+        num:10, title:"Real-Time Demo + C++ Basics",
+        goal:"Mic → model → speaker working live. C++ inference wrapper compiling and running.",
+        deliverable:"Real-time demo video (60s). C++ program reads WAV, runs ONNX, saves enhanced output. GitHub.",
+        days:[
+          {label:"Mon",tasks:[["code","pip install sounddevice. sd.query_devices() to list all audio devices. Identify mic input."],["build","Mic capture: sd.InputStream(samplerate=16000, blocksize=320, channels=1, callback=cb). Print block shapes."],["build","Real-time pipeline: callback buffers 320 samples → ONNX inference → writes to speaker output stream."],["understand","Algorithmic latency = 320/16000 = 20ms. Add compute time. Total < 100ms is good."]]},
+          {label:"Tue",tasks:[["build","realtime_denoise.py: mic → ONNX inference → speaker. Run for 30 seconds in a noisy room."],["build","Measure compute latency: time.perf_counter() inside callback. Print average over 100 frames."],["build","Record a 30-second demo: speak with background noise → record the enhanced output to a WAV file."],["push","Push realtime_denoise.py. README: 'Run: python realtime_denoise.py'. List measured latency."]]},
+          {label:"Wed",tasks:[["watch","freeCodeCamp C++ Tutorial — first 1 hour. Variables, functions, arrays, compiling."],["code","Hello World in C++. Then: function add(int a, int b). Compile: g++ -o prog prog.cpp. Run."],["understand","Pointers: int x=5; int* p=&x; *p dereferences to 5. References: int& r=x. Different from Python."],["code","float arr[100]; fill with zeros using for loop. Compile and run."]]},
+          {label:"Thu",tasks:[["build","C++ WAV reader: parse 44-byte RIFF header. Print: sample_rate, num_channels, bits_per_sample."],["code","Read PCM data: cast int16_t samples to float by dividing by 32768.0f."],["build","wav_reader.cpp compiles and prints metadata + first 5 sample values for any WAV file."],["push","week10/cpp_wav_reader/ with wav_reader.h, .cpp, main.cpp, Makefile."]]},
+          {label:"Fri",tasks:[["build","C++ ONNX Runtime: download onnxruntime headers and library. Add to Makefile."],["code","C++: Ort::Session session. Create input tensor from float array. Run inference. Get output."],["build","enhance.cpp: WAV in → float array → ONNX → enhanced float array → write to output WAV file."],["code","Compile and run on a test WAV file. Play output in VLC. Verify it sounds enhanced."]]},
+          {label:"Sat",tasks:[["build","Test C++ enhancer on 5 different WAV files. All must produce valid playable output."],["build","Compare C++ output vs Python ONNX output on same file. np.allclose should return True."],["push","week10/cpp_inference/ — code + CMakeLists.txt + build instructions in README."],["understand","Why C++? Meeami ships SDK to Qualcomm/NXP chips. All production inference code is C/C++."]]},
+          {label:"Sun",tasks:[["build","Record 60-second demo video: background noise → enhanced output. Screen record or phone."],["build","Upload to YouTube (unlisted). Embed link in GitHub README under 'Demo'."],["push","week10/ complete. Demo video link in main README."],["build","Internal visibility: show your HF Space or demo video to one audio engineer at Meeami. Casually."]]}
+        ],
+        resources:[
+          {type:"blog",label:"learncpp.com — Free Complete C++ Course",sub:"Best free C++ resource, chapter by chapter",url:"https://www.learncpp.com/"},
+          {type:"blog",label:"sounddevice Python Docs",sub:"Real-time audio I/O with Python",url:"https://python-sounddevice.readthedocs.io/"},
+          {type:"blog",label:"ONNX Runtime C++ API Docs",sub:"How to call ONNX models from C++",url:"https://onnxruntime.ai/docs/api/c/"},
+          {type:"gh",  label:"xiph/rnnoise — Real-time C denoiser",sub:"Original real-time noise suppression code",url:"https://github.com/xiph/rnnoise"},
+          {type:"yt",  label:"freeCodeCamp C++ Full Tutorial (4h)",sub:"Complete beginner C++ course on YouTube",url:"https://www.youtube.com/watch?v=vLnPwxZdW4Y"}
+        ]
+      },
+      {
+        num:11, title:"Portfolio Polish + Internal Push",
+        goal:"Every project is presentation-ready. GitHub tells the story from zero to engineer.",
+        deliverable:"audio-ai-portfolio master repo live. 4 HF Spaces public. All READMEs have metrics + demo links.",
+        days:[
+          {label:"Mon",tasks:[["build","Create repo: audio-ai-portfolio. README title: 'From zero to Audio AI Engineer in 3 months.'"],["build","Table: 5 projects — Description | Key metric | GitHub link | HuggingFace demo."],["build","Badges at top: Python 3.12 | PyTorch | ONNX Runtime | HuggingFace Spaces."],["push","Push. Open in incognito browser. How does it look to a complete stranger?"]]},
+          {label:"Tue",tasks:[["build","Every GitHub repo README: Problem | Approach | Architecture | Results table | Demo link | How to run."],["build","Architecture diagrams: draw in Excalidraw (free), export as PNG, embed in README."],["build","speech-enhancer README: add training loss curve + PESQ improvement bar chart as images."],["push","Push updated READMEs for all repos."]]},
+          {label:"Wed",tasks:[["build","HuggingFace profile: bio filled, photo added, GitHub link, LinkedIn link."],["build","Each Space: detailed description, proper tags (speech-enhancement, audio-ai, noise-suppression, gradio)."],["build","Each model repo: complete model card — metadata block with language, tags, datasets, metrics."],["deploy","Verify all Spaces load. Test each with a fresh audio file you haven't used before."]]},
+          {label:"Thu",tasks:[["build","3-sentence project summaries: what problem, what I built, what metrics I achieved."],["build","LinkedIn update: 'Audio AI Engineer (self-learning) | Data Annotator @ Meeami Technologies'."],["build","LinkedIn skills: Python, PyTorch, Signal Processing, Speech Enhancement, ONNX, librosa, torchaudio."],["push","Final portfolio push. Check every single link."]]},
+          {label:"Fri",tasks:[["practice","Explain audio classifier out loud in 2 minutes. Record yourself on phone. Listen back."],["practice","Explain speech enhancer in 2 minutes. End with: 'I would improve it by...'"],["practice","Explain WSR-MGAN in 2 minutes. Know your PESQ number cold. No hesitation."],["practice","Answer without pause: What is PESQ? Why mel scale? What does GRU add? RTF? 30 seconds each."]]},
+          {label:"Sat",tasks:[["build","Write internal pitch (1 paragraph): 'I joined as annotator. Spent evenings building X, Y, Z. I want to apply for Audio AI Engineer.'"],["push","Final GitHub push. Final HuggingFace check. Everything working."],["practice","LeetCode: 4 problems — 2 medium. Arrays, hashmaps, strings."],["understand","Meeami rounds: MCQ (OOP, OS, DBMS) → Coding test → Technical interview → HR round."]]},
+          {label:"Sun",tasks:[["build","Sit and read every README as if you are the interviewer. Fix anything that looks weak."],["push","git tag v1.0. Push tags. This is your release."],["practice","Rehearse: 'Why Audio AI Engineer at Meeami?' Be specific — reference their products, their papers, your work."],["build","This week or next: approach your manager or an audio engineer with your pitch and portfolio link."]]}
+        ],
+        resources:[
+          {type:"blog",label:"How to Write a Great ML README",sub:"What interviewers actually look for",url:"https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes"},
+          {type:"hf",  label:"HuggingFace Model Cards Guide",sub:"How to write a complete, professional model card",url:"https://huggingface.co/docs/hub/model-cards"},
+          {type:"blog",label:"Excalidraw — Free Architecture Diagrams",sub:"Draw and export clean diagrams for free",url:"https://excalidraw.com/"},
+          {type:"blog",label:"Shields.io — README Badges",sub:"Add Python, PyTorch, HF badges to your README",url:"https://shields.io/"},
+          {type:"blog",label:"LeetCode Grind 75",sub:"75 essential coding interview problems",url:"https://www.techinterviewhandbook.org/grind75"}
+        ]
+      },
+      {
+        num:12, title:"Interview Preparation + Apply",
+        goal:"Walk in knowing every answer before they finish asking the question",
+        deliverable:"Interview done. Job secured — or feedback captured and a 4-week improvement plan set.",
+        days:[
+          {label:"Mon",tasks:[["practice","DSP flashcards on paper: FFT, STFT, aliasing, Nyquist, windowing, mel formula, SNR, PESQ, STOI, MOS."],["practice","ML flashcards: gradient descent, backprop, GAN, GRU vs LSTM, batch norm, dropout, overfitting."],["practice","Audio AI: VoiceBank+DEMAND, DNS Challenge, causal vs non-causal, RTF, DNSMOS, edge deployment."],["practice","LeetCode: 3 problems. No hints. 20-minute limit per problem."]]},
+          {label:"Tue",tasks:[["practice","Full project walkthrough out loud: speech enhancer from WAV in to enhanced WAV out. Full 5 minutes."],["practice","Cold answer: 'What is the difference between PESQ and STOI?' 'When would you use DNSMOS?'"],["practice","Cold answer: 'Why Res2Net?' 'What does SE block add?' 'Why GRU over LSTM?' No pausing."],["practice","'What would you do to improve your model?' Have 3 specific, concrete answers ready."]]},
+          {label:"Wed",tasks:[["practice","C++ OOP: class, constructor, destructor, virtual function, RAII, Rule of Five. Say each definition."],["practice","Python OOP: __init__, inheritance, @property, __repr__, context managers, *args/**kwargs."],["practice","OS basics: process vs thread, deadlock, virtual memory. DBMS: SQL inner/outer joins, normalization."],["practice","LeetCode: 3 problems. Medium level. Arrays and strings."]]},
+          {label:"Thu",tasks:[["practice","Mock interview: 45 minutes. Ask a friend or record yourself. Intro → projects → DSP → code."],["practice","Identify weak spots from mock. Spend 2 hours on exactly those topics."],["build","Laptop demo ready: tabs open — GitHub portfolio, HuggingFace Space, Kaggle notebook."],["push","Final check: every README link works. Every HF Space loads without error."]]},
+          {label:"Fri",tasks:[["practice","Light revision only: skim flashcards. Your knowledge is in your hands — 12 weeks proves it."],["practice","HR prep: 'Tell me about yourself' — 90 seconds starting from your Meeami data annotator role."],["practice","Value statement: 'I have been here 3 months. I used every evening to build audio AI projects. I want to contribute as a full-time engineer.'"],["push","Final GitHub and HF check. Everything live and clean."]]},
+          {label:"Sat",tasks:[["practice","Rest and review. Go through your projects with pride. You built all of this from zero."],["practice","One final LeetCode problem. Stay sharp, don't exhaust yourself."],["build","Apply: meeamitech.com/join-us OR speak directly to your manager with pitch + portfolio link."],["push","3-month journey ends today. Whatever the outcome — you are no longer a beginner."]]},
+          {label:"Sun",tasks:[["understand","If you get the role: Day One starts the same way as Day One of this roadmap. Show up and build."],["understand","If not: ask for specific feedback. Fix the gaps. Apply again in 4 weeks. Portfolio is already built."],["build","Write JOURNEY.md: what you built, what you learned, what surprised you. Push it to GitHub."],["practice","Open your Week 1 code. Open your Week 12 code. That gap is your proof. Nobody can take it."]]}
+        ],
+        resources:[
+          {type:"blog",label:"Meeami Technologies — Careers Page",sub:"Apply directly for Audio AI Engineer",url:"https://www.meeamitech.com/join-us"},
+          {type:"blog",label:"Meeami Recruitment Process (GeeksforGeeks)",sub:"What to expect in each interview round",url:"https://www.geeksforgeeks.org/interview-experiences/meeami-technologies-recruitment-process/"},
+          {type:"blog",label:"LeetCode Grind 75",sub:"The essential 75 coding interview problems",url:"https://www.techinterviewhandbook.org/grind75"},
+          {type:"paper",label:"WSR-MGAN — Know This Cold",sub:"arxiv:2405.16834 — your core architecture",url:"https://arxiv.org/abs/2405.16834"},
+          {type:"blog",label:"Audio AI Engineer Role at Meeami",sub:"The specific job you are applying for",url:"https://www.meeamitech.com/open-positions/audio-ai-engineer---speech-enhancement"}
+        ]
+      }
+    ]
+  }
+];
+
+/* ─── WEEKLY CHALLENGES ─────────────────────────── */
+const CHALLENGES = {
+  1: {
+    task: "Build a FileStats class from scratch in 20 minutes. No notes, no Google. It takes a filepath, has word_count(), line_count(), most_common_word(n=5) returning a list of tuples, and a clean __repr__. Then write 5 assert statements to test it.",
+    duration: "20 min",
+    qa: [
+      { q: "What is the difference between a list and a tuple?", a: "List is mutable — you can add, remove, change elements. Tuple is immutable — fixed after creation. Use tuple for data that should not change (coordinates, RGB). Use list when you need to modify the collection." },
+      { q: "What does `self` mean inside a Python class method?", a: "self refers to the specific instance the method is called on. It is how the method accesses that object's own attributes and other methods. Python passes it automatically — you just declare it as the first parameter." },
+      { q: "Write a list comprehension that returns even squares from 1–10.", a: "[x**2 for x in range(1,11) if x%2==0] → gives [4, 16, 36, 64, 100]" },
+      { q: "What is the difference between == and is?", a: "== compares values (contents). is compares identity (same memory address). Two lists can be equal (==) but not identical (is). Use is only for None checks: if x is None." },
+      { q: "What does try / except / finally do?", a: "try: runs your code. except: catches a specific error type if it is raised. finally: always runs regardless of success or failure — used for cleanup like closing files or database connections." },
+      { q: "What is the difference between a dict and a set?", a: "Dict: stores key→value pairs. Lookup by key. Set: stores unique values only, no duplicates. Both use hash tables internally, so both have O(1) average lookup. Sets are like dicts with no values." }
+    ],
+    pass: [
+      "I built the FileStats class from scratch without looking anything up",
+      "I know when to use list, tuple, dict, and set without hesitating",
+      "I can read a file, handle exceptions, and write assert-based tests",
+      "I pushed working code to GitHub this week"
+    ]
+  },
+  2: {
+    task: "Load any WAV file and produce a single figure with 4 subplots — waveform, FFT magnitude, mel-spectrogram, MFCCs — and save it as a PNG. No docs, no code reference, 15 minutes. Then run compute_stats() on 3 different audio files.",
+    duration: "15 min",
+    qa: [
+      { q: "What does librosa.load(path, sr=16000) return?", a: "(y, sr) — y is a numpy float32 array of audio samples normalized to [-1.0, 1.0]. sr is the integer sample rate, which will be 16000 because we requested it." },
+      { q: "What is sample rate? Why do speech models use 16kHz?", a: "Number of audio samples captured per second. 16kHz captures frequencies up to 8kHz (Nyquist). Human speech sits between 300Hz–3400Hz, so 16kHz gives plenty of margin. 44.1kHz is for music — overkill for speech AI." },
+      { q: "What is a mel-spectrogram and how is it different from a regular spectrogram?", a: "Regular spectrogram uses a linear Hz frequency axis. Mel-spectrogram maps those frequencies to the mel scale (2595 × log₁₀(1 + f/700)) which matches how humans perceive pitch. Neural networks learn better from it." },
+      { q: "What is numpy broadcasting? Give an example.", a: "Operating on arrays of different shapes by automatically expanding smaller dimensions. (3,1) + (1,4) → (3,4): the first array copies across columns, the second copies across rows. Fails if dimensions are incompatible." },
+      { q: "How do you compute RMS energy of an audio signal in numpy?", a: "rms = np.sqrt(np.mean(y**2)). RMS = Root Mean Square. In decibels: rms_db = 20 * np.log10(rms + 1e-9). The 1e-9 prevents log(0) for silent audio." }
+    ],
+    pass: [
+      "I can load and fully visualize any WAV file in under 15 minutes from memory",
+      "I know what sample rate, mel-spectrogram, MFCC, and spectral centroid each represent",
+      "My HuggingFace Space is live and working for any uploaded WAV",
+      "I understand numpy broadcasting without needing to look it up"
+    ]
+  },
+  3: {
+    task: "Implement my_stft(signal, frame_size=2048, hop_length=512) from scratch using numpy only. It should return the magnitude spectrogram. Apply a Hamming window to each frame. Compare your output to librosa.stft on the same audio — they must be within tolerance.",
+    duration: "45 min",
+    qa: [
+      { q: "What is the Nyquist theorem?", a: "To accurately represent a frequency f, your sample rate must be at least 2×f. The maximum frequency you can represent is sample_rate/2. Below Nyquist → aliasing. Phone audio uses 8kHz → max 4kHz. Speech AI uses 16kHz → max 8kHz." },
+      { q: "Why do we apply a window function before the FFT?", a: "Each frame is finite — it has sharp edges where the audio is cut. These edges cause 'spectral leakage': energy appears at wrong frequencies. Windowing (Hamming, Hanning) tapers the edges to zero, preventing this leakage." },
+      { q: "What is aliasing? Give an example.", a: "When a signal is sampled below the Nyquist rate, high frequencies appear as lower frequencies. Example: a 7000Hz tone sampled at 8000Hz appears as 1000Hz (8000−7000). This is why we always sample at 2× the max frequency." },
+      { q: "What does hop_length control in STFT?", a: "The step size in samples between consecutive frames. Smaller hop = more time resolution, more overlap, more columns in the spectrogram, slower computation. Larger hop = coarser time resolution but faster. Common: hop = frame_size/4." },
+      { q: "What is the difference between DFT and FFT?", a: "DFT is the mathematical definition: X[k] = Σ x[n]·e^(−j2πkn/N). FFT is a family of efficient algorithms that compute the DFT in O(n log n) instead of O(n²). Same result, very different speed for large N." },
+      { q: "Write the mel scale formula from memory.", a: "mel = 2595 × log₁₀(1 + f_hz / 700). Inverse: f_hz = 700 × (10^(mel/2595) − 1). Know this formula — Meeami interviews test it." }
+    ],
+    pass: [
+      "I implemented STFT from scratch and it matches librosa output",
+      "I can explain FFT, STFT, aliasing, and mel scale without notes",
+      "I know what every axis of a spectrogram means",
+      "I can answer 'what is the Nyquist theorem?' in 20 seconds flat"
+    ]
+  },
+  4: {
+    task: "Build and train a 2-class audio classifier entirely from scratch on Kaggle GPU: custom Dataset class, DataLoader, nn.Module with 3 layers, training loop, validation loop, checkpoint saving, inference script. No reference code. Target >90% accuracy.",
+    duration: "60 min",
+    qa: [
+      { q: "What is autograd? What does loss.backward() actually do?", a: "PyTorch's automatic differentiation system. The forward pass builds a computational graph. backward() traverses the graph from the loss back to every parameter, computing gradients using the chain rule at each node." },
+      { q: "Why must you call optimizer.zero_grad() before each batch?", a: "PyTorch accumulates (adds) gradients by default. Without zeroing, the current batch's gradients stack on top of the previous batch's, giving you a wrong update. Always: zero → forward → loss → backward → step." },
+      { q: "What is overfitting? How do you detect it from a loss curve?", a: "Model memorizes training data rather than learning general patterns. Signs: training loss keeps falling, but validation loss plateaus or rises. The gap between train and val loss grows over epochs." },
+      { q: "What is the difference between model.train() and model.eval()?", a: "model.train(): enables dropout (randomly drops neurons) and batch norm in training mode. model.eval(): disables both for deterministic inference. Always pair model.eval() with torch.no_grad() to also skip gradient computation." },
+      { q: "What does weight_decay do in the Adam optimizer?", a: "Adds L2 regularization: penalizes large weights by adding λ×||w||² to the loss. This pushes weights toward zero, preventing any single weight from dominating, which reduces overfitting." },
+      { q: "What shapes does a DataLoader return for audio classification?", a: "For each batch: X shape [batch_size, channels, time_steps] or [batch_size, n_mels, frames] for spectrograms. y shape [batch_size] for integer class labels." }
+    ],
+    pass: [
+      "I built and trained a PyTorch classifier from memory — no reference code",
+      "I know what autograd, backward(), zero_grad() each do without hesitating",
+      "My Kaggle notebook shows >90% accuracy with training/validation curves",
+      "I have a working predict.py that takes a WAV and outputs a class + confidence"
+    ]
+  },
+  5: {
+    task: "Build SpeechEnhancementDataset from scratch in 30 minutes: loads noisy/clean pairs by matching filenames, resamples to 16kHz, normalizes by peak amplitude, pads/trims to exactly 4 seconds. Create a DataLoader and print one batch's shapes and value ranges.",
+    duration: "30 min",
+    qa: [
+      { q: "What does torchaudio.load() return?", a: "(waveform, sample_rate). Waveform is a float32 tensor of shape [channels, num_samples]. Sample_rate is an integer. For mono 16kHz audio: shape [1, 64000] for a 4-second file." },
+      { q: "What is VoiceBank+DEMAND? Why is it the standard benchmark?", a: "28 VoiceBank speakers mixed with 18 DEMAND noise types at 0, 5, 10, 15 dB SNR. 11,572 training pairs, 824 test pairs. Standard because it has clean/noisy pairs for PESQ evaluation and every major paper reports on it." },
+      { q: "Why normalize audio by peak amplitude before training?", a: "Neural networks train better when inputs are in a consistent range. Dividing by max(abs(waveform)) maps all samples to [-1, 1] regardless of recording volume. Prevents very loud files dominating the gradient updates." },
+      { q: "What is data augmentation for audio? Name 3 examples and when you apply them.", a: "Techniques to create more training variety: (1) AddNoise — random SNR. (2) FrequencyMasking — blank out frequency bands. (3) TimeShift — shift audio left/right. Apply ONLY during training. Never on validation or test — it inflates scores." },
+      { q: "What does num_workers do in DataLoader?", a: "Number of parallel worker processes loading data in the background while the GPU trains. num_workers=2 means 2 CPU processes prefetch batches. Keeps GPU utilization high. On Kaggle: 2–4 works well." }
+    ],
+    pass: [
+      "I built SpeechEnhancementDataset from scratch and it loads paired audio correctly",
+      "I know what VoiceBank+DEMAND is: speakers, noise types, SNR levels, split sizes",
+      "My DataLoader returns tensors of shape [B, 1, 64000] as expected",
+      "I published a Kaggle notebook with the full pipeline and sample visualizations"
+    ]
+  },
+  6: {
+    task: "Build a U-Net speech enhancer from scratch: 3-layer encoder (Conv1d, stride=2), bottleneck, 3-layer decoder (ConvTranspose1d), skip connections. Input [B,1,64000] must equal Output [B,1,64000]. Train 30 epochs on VoiceBank+DEMAND. Record your PESQ and STOI.",
+    duration: "45 min architecture + train on Kaggle",
+    qa: [
+      { q: "What is speech enhancement? Describe input and output.", a: "Separating clean speech from a noisy mixture. Input: noisy waveform (or spectrogram). Output: estimated clean waveform. Goal: higher PESQ (quality) and STOI (intelligibility) than the noisy input." },
+      { q: "What is PESQ? State the range and typical values.", a: "Perceptual Evaluation of Speech Quality. Measures naturalness. Range: 1.0 (worst) to 4.5 (best). Noisy VoiceBank input ≈ 1.97. A decent simple model ≈ 2.3–2.5. SOTA models reach 3.0+." },
+      { q: "What is STOI? How is it different from PESQ?", a: "Short-Time Objective Intelligibility. Measures how understandable the speech is, not how natural. Range 0–1. Noisy ≈ 0.78. PESQ = quality (does it sound good?). STOI = intelligibility (can you understand it?)." },
+      { q: "What are U-Net skip connections? Why do they matter for audio?", a: "Direct connections from encoder layers to matching decoder layers. The encoder compresses and loses fine detail. Skip connections copy that detail directly to the decoder, preserving high-frequency speech information that would otherwise be lost." },
+      { q: "What is SI-SNR loss?", a: "Scale-Invariant Signal-to-Noise Ratio loss. Measures signal power vs noise power in a scale-independent way: SI-SNR = 10·log₁₀(||projection||² / ||noise||²). Better for perceptual quality than L1 alone because it is scale-invariant." },
+      { q: "Why do we combine L1 loss and SI-SNR loss?", a: "L1 ensures the predicted waveform has the right magnitude (absolute values). SI-SNR ensures the signal energy is higher than the noise energy (perceptual quality). Together they push both absolute accuracy and perceptual quality." }
+    ],
+    pass: [
+      "I trained a speech enhancer and have real PESQ and STOI numbers — I know them cold",
+      "I can explain PESQ and STOI in 30 seconds each without notes",
+      "I can explain U-Net skip connections and why they matter",
+      "My HuggingFace Space shows enhanced audio with before/after spectrogram comparison"
+    ]
+  },
+  7: {
+    task: "Implement Res2Block from scratch (no reference). Input [B,64,1000], scale=4. Split into 4 channel groups, convolve each, add hierarchically (group i uses group i-1's output), merge. Output must be [B,64,1000]. Then add SEBlock. Combine into Res2SEBlock.",
+    duration: "45 min",
+    qa: [
+      { q: "What is Res2Net and why does it help speech enhancement?", a: "Multi-scale feature extractor. Splits channels into S groups, convolves hierarchically (each group incorporates the previous), then merges. Captures spectral patterns at different time scales simultaneously — important because speech has structure at multiple timescales." },
+      { q: "What is a Squeeze-Excitation block? Describe the 4 operations.", a: "(1) Squeeze: global avg pool [B,C,T] → [B,C,1]. (2) Excitation FC1: [B,C] → [B,C//r]. (3) ReLU activation. (4) FC2 + Sigmoid: [B,C//r] → [B,C] weights in [0,1]. Multiply original channels by weights. Learns which frequency channels are important." },
+      { q: "Why do we use GRU instead of a standard RNN or LSTM here?", a: "GRU has fewer parameters than LSTM (2 gates vs 3) but similar performance. Speech enhancement needs sequential modeling — audio frames have temporal dependencies. GRU gives the model memory of past frames without the complexity of LSTM." },
+      { q: "What is an ablation study? Why does it matter professionally?", a: "Systematically removing one component at a time to measure its individual contribution. Validates design choices with evidence, not intuition. In an interview: showing an ablation table proves you think like an engineer, not just a coder." },
+      { q: "What is the difference between causal and non-causal convolution?", a: "Causal: uses only current and past samples (left-only padding). Non-causal: uses future samples too (symmetric padding). Real-time systems are causal — you process frame N before frame N+1 arrives. All Meeami products must be causal." }
+    ],
+    pass: [
+      "I implemented Res2Block from scratch and it produces the correct output shape",
+      "My PESQ improved by at least 0.2 over Week 6 — I have the numbers",
+      "I have an ablation table showing each component's contribution",
+      "I can draw the full WSR-MGAN architecture from memory on paper"
+    ]
+  },
+  8: {
+    task: "Write a complete enhance.py CLI tool from scratch using argparse. --input, --output, --model flags. It must print a formatted results table: PESQ before, PESQ after, STOI before, STOI after, Inference time (ms), RTF, Model size (MB). 30 minutes, no reference.",
+    duration: "30 min",
+    qa: [
+      { q: "What is DNSMOS? How is it different from PESQ?", a: "DNSMOS is a reference-free automated MOS predictor trained on subjective human ratings. PESQ needs a clean reference signal. DNSMOS works on any real recording — you can run it on recordings from your mic with no ground truth available." },
+      { q: "What is RTF and why does Meeami care about it?", a: "Real-Time Factor = inference_time_seconds / audio_duration_seconds. RTF < 1.0 = faster than real-time. Meeami ships to embedded chips (Qualcomm, NXP) with limited compute. These chips need RTF of 0.1 or less, not just < 1.0." },
+      { q: "What makes a good HuggingFace model card?", a: "Metadata block (language, tags, datasets, metrics). Architecture description. Training data and procedure. Evaluation metrics with exact numbers. Code snippet showing how to use it. Known limitations. Link to paper/repo." },
+      { q: "What is argparse? Write the structure for --input and --model flags.", a: "Python's standard library for parsing command-line arguments. Structure: parser = argparse.ArgumentParser(). parser.add_argument('--input', required=True). parser.add_argument('--model', default='model.pt'). args = parser.parse_args()." },
+      { q: "What does gr.Blocks give you that gr.Interface does not?", a: "Full layout control: you can arrange components in rows, columns, tabs, accordions. Multiple inputs/outputs, custom event handlers, live streaming. Interface is a one-input/one-output template. Blocks is a full UI framework." }
+    ],
+    pass: [
+      "My HuggingFace Space is live and works correctly on 10 different audio files",
+      "I can run enhance.py and immediately see PESQ/STOI/RTF numbers",
+      "I wrote RESULTS.md with an honest limitations section — not just the wins",
+      "I know DNSMOS and RTF definitions cold — 20 seconds each, no pause"
+    ]
+  },
+  9: {
+    task: "Export your trained model to ONNX, apply INT8 quantization, write benchmark.py that measures and prints a formatted 3-row table: PyTorch-FP32 | ONNX-FP32 | ONNX-INT8 with columns: Model, Size MB, Latency ms, PESQ, STOI. All numbers must be real, measured values.",
+    duration: "45 min",
+    qa: [
+      { q: "What is ONNX and why do we export to it?", a: "Open Neural Network Exchange. A standard format that any compatible runtime can load — ONNX Runtime, TensorRT, CoreML, Android NNAPI. You export once and deploy anywhere without shipping PyTorch." },
+      { q: "What is INT8 quantization? What are the three tradeoffs?", a: "Converts FP32 weights (32 bits) to INT8 (8 bits). Tradeoffs: (1) Size: ~4× smaller. (2) Speed: ~1.5–3× faster on CPU (integer ALUs are faster). (3) Quality: small PESQ drop, usually < 0.1." },
+      { q: "What is causal convolution? Why is it required for real-time?", a: "Convolution that only uses current and past time steps — left-only padding. Real-time means you process audio frame by frame as it arrives. You cannot use future frames that have not arrived yet. Non-causal = not deployable live." },
+      { q: "What is streaming inference?", a: "Processing audio in small chunks (e.g. 320 samples = 20ms) sequentially, maintaining the GRU hidden state between chunks. The model never sees the full file — just one chunk at a time, like a real microphone stream." },
+      { q: "Name two reasons embedded chips prefer INT8 over FP32.", a: "(1) Memory: chips like ARM Cortex-M have 256KB–2MB RAM. A 2MB INT8 model fits; an 8MB FP32 model does not. (2) Speed: most embedded DSPs lack FP32 hardware units — integer operations run on dedicated fast ALUs." }
+    ],
+    pass: [
+      "I exported my model to ONNX and verified outputs match PyTorch within tolerance",
+      "I know INT8 tradeoffs — size, speed, quality numbers — from my own benchmark table",
+      "My streaming inference processes audio chunk by chunk with correct GRU state",
+      "I can explain when to use INT8 vs FP16 vs FP32 without hesitating"
+    ]
+  },
+  10: {
+    task: "Write a C++ program from scratch: reads a WAV file (parse the 44-byte RIFF header), loads your ONNX model with ONNX Runtime C++ API, runs inference on the float array, and saves the enhanced output as a valid WAV file. Compile with g++ and verify the output plays.",
+    duration: "90 min",
+    qa: [
+      { q: "What is a pointer in C++? How is it different from a Python variable?", a: "A pointer stores a memory address, not a value directly. int* p = &x means p holds x's address. *p reads the value at that address. Python variables are all references managed automatically — C++ makes you manage memory explicitly." },
+      { q: "What is RAII in C++?", a: "Resource Acquisition Is Initialization. Resources (memory, file handles, network sockets) are acquired in the constructor and released in the destructor. If an exception occurs, the destructor still runs. No manual cleanup needed. std::vector and std::unique_ptr use this." },
+      { q: "What are the 44 bytes in a WAV file header?", a: "Bytes 0–3: 'RIFF'. 4–7: file size. 8–11: 'WAVE'. 12–15: 'fmt '. 20–21: audio format (1=PCM). 22–23: num channels. 24–27: sample rate. 34–35: bits per sample. 36–39: 'data'. 40–43: data size in bytes." },
+      { q: "Why does Meeami need C++ engineers, not just Python engineers?", a: "Meeami ships an Audio AI SDK to embedded chips (Qualcomm DSPs, ARM Cortex, NXP). These run C/C++ only — no Python, no PyTorch runtime. Engineers wrap ONNX models in C++ inference code for the SDK. Python is for research; C++ ships to devices." },
+      { q: "What is the ONNX Runtime C++ inference pattern?", a: "Create Ort::Env. Create Ort::SessionOptions. Create Ort::Session (env, model_path, options). Create input tensor from float* array using Ort::MemoryInfo. Call session.Run(). Extract output tensor. Copy output to float*." }
+    ],
+    pass: [
+      "I wrote and compiled a C++ program that reads a WAV, enhances it via ONNX, and saves output",
+      "I know what RAII means and how C++ memory differs from Python",
+      "My real-time Python denoiser runs live from mic input with measured latency",
+      "I recorded and published a real-time demo video"
+    ]
+  },
+  11: {
+    task: "Open your audio-ai-portfolio GitHub in incognito mode. Read it for 10 minutes as a Meeami hiring manager who has never met you. Write down every weak point you find. Fix all of them before moving to Week 12. Then rehearse all 3 project explanations out loud.",
+    duration: "10 min audit — then fix everything",
+    qa: [
+      { q: "If a Meeami engineer opens your GitHub right now, what is the first thing they see and what should they conclude?", a: "They see your pinned audio-ai-portfolio repo. Within 30 seconds they should know: you built a speech enhancer (PESQ X.X), you deployed it on HuggingFace, and you have ONNX edge deployment code. If they must scroll to find this — it is too buried." },
+      { q: "What is the difference between PESQ and DNSMOS in terms of when to use each?", a: "PESQ: reference-based, needs clean ground truth, used on datasets like VoiceBank+DEMAND. DNSMOS: reference-free, works on any real recording. For real-world recordings where you have no clean reference, DNSMOS is the only option." },
+      { q: "What does a complete HuggingFace model card contain?", a: "YAML metadata block (language, tags, datasets, metrics), architecture description, training data and configuration, evaluation results with exact numbers, usage code example, limitations, license, link to paper or repo." },
+      { q: "What do Meeami Audio AI Engineers do day-to-day based on their LinkedIn profiles?", a: "R&D on speech enhancement models, AI porting to embedded platforms in C/C++, objective testing (PESQ/STOI/DNSMOS) and subjective MOS testing, data preparation for model training, implementing published architectures from papers." }
+    ],
+    pass: [
+      "My portfolio README tells a clear story in under 60 seconds — no scrolling needed",
+      "Every HuggingFace Space loads and works correctly for any user right now",
+      "I can state the key metric for every project without checking notes",
+      "My LinkedIn title and skills section reflect what I actually built this quarter"
+    ]
+  },
+  12: {
+    task: "Conduct a full 45-minute mock interview with yourself (or a friend). Cover: 90-second intro, explain 2 projects with metrics, answer 3 DSP questions cold, solve 1 LeetCode medium out loud in 20 min, close with your value proposition. Record it. Watch it back.",
+    duration: "45 min mock interview",
+    qa: [
+      { q: "In one sentence: what did you build in these 3 months?", a: "I built speech enhancement models from scratch — including a WSR-MGAN style architecture with Res2Net, Squeeze-Excitation and GRU — deployed them with ONNX INT8 quantization on HuggingFace, and wrote a C++ inference wrapper for edge deployment." },
+      { q: "What PESQ score does your best model achieve? What is the noisy baseline?", a: "(Answer with your real numbers from RESULTS.md. If you cannot say these cold without checking, stop here and look them up. Then say them 5 times out loud. You must know your own numbers.)" },
+      { q: "Explain the mel scale in 30 seconds — say the formula.", a: "Mel = 2595 × log₁₀(1 + f/700). It converts Hz to a perceptual frequency scale matching how humans hear pitch. We use it because the difference between 100Hz and 200Hz sounds like the same pitch jump as 1000Hz to 2000Hz." },
+      { q: "Why do you want to be an Audio AI Engineer at Meeami specifically?", a: "(Must mention: their edge-first approach, specific products like noise suppression or AEC, the WSR-MGAN paper you implemented, Qualcomm/NXP client ecosystem. Generic answer = rejected. Specific answer = hired.)" },
+      { q: "What is the RTF of your ONNX INT8 model on CPU?", a: "(Answer with your real benchmark number. RTF = your measured inference_time / audio_duration. This number must come from your benchmark.py output — if you don't know it, run the benchmark right now.)" }
+    ],
+    pass: [
+      "I completed a 45-minute mock interview without stopping or checking notes",
+      "I know every metric — PESQ, STOI, RTF, model size — from my own projects cold",
+      "I submitted the job application on meeamitech.com OR had the direct conversation",
+      "I am ready. Whatever happens next, I earned the right to be in that room."
+    ]
+  }
+};
+
+/* ─── CONSTANTS ─────────────────────────────────── */
+const BM={watch:'b-watch',code:'b-code',build:'b-build',read:'b-read',practice:'b-practice',deploy:'b-deploy',push:'b-push',understand:'b-understand',kaggle:'b-kaggle'};
+const BL={watch:'Watch',code:'Code',build:'Build',read:'Read',practice:'Practice',deploy:'Deploy',push:'Push',understand:'Understand',kaggle:'Kaggle'};
+const RI={yt:'YT',gh:'GH',kg:'KG',hf:'HF',blog:'↗',book:'📖',paper:'📄'};
+const RC={yt:'ric-yt',gh:'ric-gh',kg:'ric-kg',hf:'ric-hf',blog:'ric-blog',book:'ric-book',paper:'ric-paper'};
+const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const QUOTES=[
+  "Discipline is choosing between what you want now and what you want most.",
+  "Every expert was once a beginner. The gap is just consistent days.",
+  "You don't need to be great to start, but you need to start to be great.",
+  "The person who shows up every day beats the person who shows up sometimes.",
+  "Code written today is experience tomorrow. Push something.",
+  "Hard work beats talent when talent doesn't work hard.",
+  "Your competition is resting. Are you?",
+  "One more commit. One step closer.",
+  "The Meeami engineers you admire started exactly where you are."
+];
+let focusMode=false;
+
+/* ─── HELPERS ───────────────────────────────────── */
+function tid(w,d,t){return `w${w}d${d}t${t}`;}
+function getC(id){return localStorage.getItem(id)==='1';}
+function setC(id,v){localStorage.setItem(id,v?'1':'0');}
+function todayKey(){return 'streak-'+new Date().toISOString().slice(0,10);}
+function markToday(){localStorage.setItem(todayKey(),'1');}
+
+function getTodayDayName(){return DAY_NAMES[new Date().getDay()];}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ─── RENDER ────────────────────────────────────── */
+function renderAll(){
+  const tabsEl=document.getElementById('monthTabs');
+  const mobNav=document.getElementById('mobileNav');
+  const secEl=document.getElementById('monthSections');
+  tabsEl.innerHTML=''; secEl.innerHTML='';
+  if(mobNav) mobNav.innerHTML='';
+
+  const MONTH_SHORT=['Python\n+DSP','Audio\nAI Core','Edge\n+Job'];
+
+  DATA.forEach((month,mIdx)=>{
+    /* desktop tab */
+    const tab=document.createElement('button');
+    tab.className='month-tab'+(mIdx===0?' active':'');
+    tab.role='tab';
+    tab.textContent=`Month ${month.month}`;
+    tab.setAttribute('aria-label',month.title);
+    tab.onclick=()=>switchMonth(mIdx);
+    tabsEl.appendChild(tab);
+
+    /* mobile bottom nav button — Thumb Zone Rule */
+    if(mobNav){
+      const mb=document.createElement('button');
+      mb.className='mob-month-btn'+(mIdx===0?' active':'');
+      mb.setAttribute('aria-label',`Month ${month.month}: ${month.title}`);
+      mb.innerHTML=`
+        <div class="mob-month-icon">${month.month}</div>
+        <span class="mob-month-label">${MONTH_SHORT[mIdx]||'Month '+month.month}</span>`;
+      mb.onclick=()=>switchMonth(mIdx);
+      mobNav.appendChild(mb);
+    }
+
+    /* section */
+    const sec=document.createElement('div');
+    sec.className='month-section'+(mIdx===0?' active':'');
+    sec.id=`m${mIdx}`;
+
+    /* toolbar */
+    const todayName=getTodayDayName();
+    sec.innerHTML=`
+      <div class="toolbar">
+        <button class="tool-btn" onclick="toggleFocus()">Hide done</button>
+        <button class="tool-btn" onclick="expandAll()">Expand all</button>
+        <button class="tool-btn" onclick="collapseAll()">Collapse all</button>
+        <div class="today-chip"><span class="dot"></span>Today is ${todayName}</div>
+      </div>
+      <div class="month-hero">
+        <div class="month-badge">${month.month}</div>
+        <div class="month-info">
+          <div class="month-title">${month.title}</div>
+          <div class="month-sub">${month.sub}</div>
+          <div class="month-chips">${month.milestones.map(m=>`<span class="chip">${m}</span>`).join('')}</div>
+        </div>
+      </div>`;
+
+    /* weeks */
+    month.weeks.forEach(week=>{
+      const {totalT,doneT}=weekStats(week);
+      const pct=totalT?Math.round(doneT/totalT*100):0;
+      const complete=pct===100;
+
+      const card=document.createElement('div');
+      card.className='week-card'+(complete?' complete':'');
+      card.id=`wk${week.num}`;
+
+      card.innerHTML=`
+        <div class="week-header" onclick="toggleWeek(${week.num})" role="button" aria-expanded="false">
+          <div class="week-badge">${complete?'✓':'W'+week.num}</div>
+          <div class="week-info">
+            <div class="week-title">${week.title}</div>
+            <div class="week-goal">${week.goal}</div>
+          </div>
+          <div class="week-meta">
+            <div class="week-pct-bar">
+              <div class="mini-track"><div class="mini-fill" id="wf${week.num}" style="width:${pct}%"></div></div>
+              <span class="mini-pct" id="wp${week.num}">${pct}%</span>
+            </div>
+          </div>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="week-body">
+          <div class="deliverable"><strong>📦 Week Deliverable:</strong> ${week.deliverable}</div>
+          <div class="days-wrap" id="dw${week.num}"></div>
+          <div class="resources-wrap">
+            <div class="resources-header">📚 Resources for this week</div>
+            <div class="res-grid">
+              ${week.resources.map(r=>`
+                <a class="res-link" href="${r.url}" target="_blank" rel="noopener noreferrer">
+                  <div class="res-icon-wrap ${RC[r.type]}">${RI[r.type]}</div>
+                  <div class="res-text-wrap">
+                    <div class="res-label">${r.label}</div>
+                    <span class="res-sub">${r.sub}</span>
+                  </div>
+                </a>`).join('')}
+            </div>
+          </div>
+        </div>`;
+
+      sec.appendChild(card);
+
+      /* challenge — appended after resources inside week-body */
+      renderChallenge(week.num, card.querySelector('.week-body'));
+
+      /* days */
+      const todayStr=getTodayDayName();
+      const dw=card.querySelector(`#dw${week.num}`);
+      week.days.forEach((day,di)=>{
+        const allDone=day.tasks.every((_,ti)=>getC(tid(week.num,di,ti)));
+        const isToday=day.label===todayStr;
+
+        const dc=document.createElement('div');
+        dc.className='day-card'+(allDone?' done':'')+(isToday?' today-glow':'');
+        dc.id=`dc${week.num}_${di}`;
+
+        const todayTag=isToday?`<span class="day-today-tag">TODAY</span>`:'';
+
+        dc.innerHTML=`
+          <div class="day-inner">
+            <label class="day-check-zone" for="cb${week.num}_${di}" aria-label="Mark ${day.label} complete">
+              <input type="checkbox" id="cb${week.num}_${di}" ${allDone?'checked':''}
+                onchange="toggleDay(${week.num},${di},this.checked)">
+            </label>
+            <div class="day-content">
+              <div class="day-header">
+                <span class="day-label">${day.label}</span>
+                ${todayTag}
+              </div>
+              <div class="task-list">
+                ${day.tasks.map(([type,text],ti)=>`
+                  <div class="task-item" id="ti${week.num}_${di}_${ti}"
+                    style="${getC(tid(week.num,di,ti))?'text-decoration:line-through;opacity:0.5':''}">
+                    <span class="badge ${BM[type]}">${BL[type]}</span>${text}
+                  </div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+        dw.appendChild(dc);
+      });
+    });
+
+    secEl.appendChild(sec);
+  });
+
+  /* auto-open current week (Serial Position Effect: surface what's now) */
+  autoOpenCurrentWeek();
+  updateStats();
+  setDailyQuote();
+}
+
+function autoOpenCurrentWeek(){
+  for(const month of DATA){
+    for(const week of month.weeks){
+      const {totalT,doneT}=weekStats(week);
+      if(doneT<totalT){
+        const mIdx=DATA.findIndex(m=>m.weeks.some(w=>w.num===week.num));
+        if(mIdx>=0) switchMonth(mIdx);
+        const card=document.getElementById(`wk${week.num}`);
+        if(card){
+          /* use smooth JS animation — not classList toggle */
+          card.classList.add('open');
+          const body=card.querySelector('.week-body');
+          const hdr=card.querySelector('.week-header');
+          if(body){
+            body.style.height='auto';
+            const h=body.scrollHeight;
+            body.style.height='0';
+            requestAnimationFrame(()=>{
+              body.style.height=h+'px';
+              setTimeout(()=>{ if(card.classList.contains('open')) body.style.height='auto'; },380);
+            });
+          }
+          if(hdr) hdr.setAttribute('aria-expanded','true');
+          /* Scroll to the week card after a brief delay */
+          setTimeout(()=>{
+            card.scrollIntoView({behavior:'smooth',block:'start'});
+          },120);
+        }
+        return;
+      }
+    }
+  }
+}
+
+/* ─── INTERACTIONS ──────────────────────────────── */
+function toggleWeek(n){
+  const card=document.getElementById(`wk${n}`);
+  const body=card.querySelector('.week-body');
+  const hdr=card.querySelector('.week-header');
+  const isOpen=card.classList.contains('open');
+
+  if(!isOpen){
+    /* Opening: measure full height then animate to it */
+    card.classList.add('open');
+    body.style.height='auto';
+    const h=body.scrollHeight;
+    body.style.height='0';
+    requestAnimationFrame(()=>{
+      body.style.height=h+'px';
+      /* After transition, let it be 'auto' so content can grow */
+      setTimeout(()=>{ if(card.classList.contains('open')) body.style.height='auto'; },380);
+    });
+    if(hdr) hdr.setAttribute('aria-expanded','true');
+  } else {
+    /* Closing: lock current height, then animate to 0 */
+    body.style.height=body.scrollHeight+'px';
+    requestAnimationFrame(()=>{
+      body.style.height='0';
+    });
+    setTimeout(()=>{ card.classList.remove('open'); },340);
+    if(hdr) hdr.setAttribute('aria-expanded','false');
+  }
+}
+
+function toggleDay(wn,di,checked){
+  const week=DATA.flatMap(m=>m.weeks).find(w=>w.num===wn);
+  week.days[di].tasks.forEach((_,ti)=>{
+    setC(tid(wn,di,ti),checked);
+    const el=document.getElementById(`ti${wn}_${di}_${ti}`);
+    if(el)el.style.cssText=checked?'text-decoration:line-through;opacity:0.5':'';
+  });
+  const dc=document.getElementById(`dc${wn}_${di}`);
+  if(dc){
+    dc.classList.toggle('done',checked);
+    if(focusMode&&checked)dc.classList.add('hidden');
+  }
+  updateWeekPct(wn);
+  updateStats();
+  markToday();
+  /* Peak-End Rule: celebrate week completion */
+  const {totalT,doneT}=weekStats(week);
+  if(doneT===totalT&&checked) showToast('🎉 Week '+wn+' complete! You earned it.');
+}
+
+function updateWeekPct(wn){
+  const week=DATA.flatMap(m=>m.weeks).find(w=>w.num===wn);
+  const {totalT,doneT}=weekStats(week);
+  const pct=totalT?Math.round(doneT/totalT*100):0;
+  const complete=pct===100;
+  const card=document.getElementById(`wk${wn}`);
+  if(card)card.classList.toggle('complete',complete);
+  const f=document.getElementById(`wf${wn}`); if(f)f.style.width=pct+'%';
+  const p=document.getElementById(`wp${wn}`); if(p){p.textContent=pct+'%'; p.style.color=complete?'var(--green-d)':'var(--muted)';}
+  const badge=card&&card.querySelector('.week-badge'); if(badge)badge.textContent=complete?'✓':'W'+wn;
+}
+
+function weekStats(week){
+  let totalT=0,doneT=0;
+  week.days.forEach((d,di)=>d.tasks.forEach((_,ti)=>{totalT++;if(getC(tid(week.num,di,ti)))doneT++;}));
+  return{totalT,doneT};
+}
+
+function updateStats(){
+  let total=0,done=0;
+  DATA.forEach(m=>m.weeks.forEach(w=>{const{totalT,doneT}=weekStats(w);total+=totalT;done+=doneT;}));
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('pctFill').style.width=pct+'%';
+  document.getElementById('pctLabel').textContent=pct+'%';
+  document.getElementById('sDone').textContent=done;
+  document.getElementById('sLeft').textContent=total-done;
+  /* streak */
+  let streak=0;
+  const today=new Date(); today.setHours(0,0,0,0);
+  for(let i=0;i<90;i++){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    if(localStorage.getItem('streak-'+d.toISOString().slice(0,10))==='1')streak++;
+    else if(i>0)break;
+  }
+  document.getElementById('sStreak').textContent=streak+'🔥';
+}
+
+function toggleFocus(){
+  focusMode=!focusMode;
+  document.querySelectorAll('.tool-btn').forEach(b=>{
+    if(b.textContent==='Hide done'||b.textContent==='Show done'){
+      b.textContent=focusMode?'Show done':'Hide done';
+      b.classList.toggle('active',focusMode);
+    }
+  });
+  document.querySelectorAll('.day-card').forEach(dc=>{
+    if(dc.classList.contains('done'))dc.classList.toggle('hidden',focusMode);
+  });
+}
+
+function expandAll(){
+  document.querySelectorAll('.week-card').forEach(c=>{
+    if(c.classList.contains('open')) return;
+    c.classList.add('open');
+    const body=c.querySelector('.week-body');
+    if(body){
+      body.style.height='auto';
+      const h=body.scrollHeight;
+      body.style.height='0';
+      requestAnimationFrame(()=>{
+        body.style.height=h+'px';
+        setTimeout(()=>{ if(c.classList.contains('open')) body.style.height='auto'; },380);
+      });
+    }
+    const hdr=c.querySelector('.week-header'); if(hdr)hdr.setAttribute('aria-expanded','true');
+  });
+}
+function collapseAll(){
+  document.querySelectorAll('.week-card').forEach(c=>{
+    if(!c.classList.contains('open')) return;
+    const body=c.querySelector('.week-body');
+    if(body){ body.style.height=body.scrollHeight+'px'; requestAnimationFrame(()=>{ body.style.height='0'; }); }
+    setTimeout(()=>{ c.classList.remove('open'); },340);
+    const hdr=c.querySelector('.week-header'); if(hdr)hdr.setAttribute('aria-expanded','false');
+  });
+}
+
+function switchMonth(idx){
+  document.querySelectorAll('.month-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.mob-month-btn').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.month-section').forEach((s,i)=>s.classList.toggle('active',i===idx));
+  /* Scroll to top of content smoothly on mobile */
+  if(window.innerWidth<=680){
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function setDailyQuote(){
+  const day=new Date().getDay();
+  const el=document.getElementById('dailyQuote');
+  if(el)el.textContent='"'+QUOTES[day%QUOTES.length]+'"';
+}
+
+/* ─── CHALLENGE RENDERING ────────────────────────── */
+function renderChallenge(weekNum, parentEl) {
+  const ch = CHALLENGES[weekNum];
+  if (!ch) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'challenge-wrap';
+  wrap.id = `ch${weekNum}`;
+
+  const completedBuild = localStorage.getItem(`chbuild-${weekNum}`) === '1';
+  const passCount = ch.pass.filter((_,i) => localStorage.getItem(`chpass-${weekNum}-${i}`) === '1').length;
+  const allPassed = passCount === ch.pass.length;
+
+  wrap.innerHTML = `
+    <div class="challenge-header" onclick="toggleChallenge(${weekNum})">
+      <div class="challenge-header-left">
+        <span class="challenge-icon">🧪</span>
+        <div>
+          <div class="challenge-title">Week ${weekNum} Challenge — Test Your Understanding</div>
+          <div class="challenge-subtitle">Build It · Explain It · Pass It — do this before moving to Week ${weekNum+1}</div>
+        </div>
+      </div>
+      <button class="challenge-toggle-btn" id="chtbtn${weekNum}">Open Challenge</button>
+    </div>
+    <div class="challenge-body">
+
+      <div class="build-task">
+        <div class="build-task-header">
+          <span class="build-task-label">🔨 Part 1 — Build It From Scratch</span>
+          <span class="build-duration">⏱ ${ch.duration}</span>
+        </div>
+        <div class="build-task-body">
+          <div class="build-task-text">${ch.task}</div>
+          <div class="build-done-row">
+            <label for="cbbuild${weekNum}">
+              <input type="checkbox" id="cbbuild${weekNum}"
+                ${completedBuild ? 'checked' : ''}
+                onchange="saveBuildDone(${weekNum}, this.checked)">
+              <span>I built this from scratch without looking anything up ✓</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-section">
+        <div class="qa-title">💬 Part 2 — Explain It (say answer out loud, then reveal)</div>
+        <div class="qa-grid">
+          ${ch.qa.map((item, qi) => {
+            const revealed = localStorage.getItem(`chqa-${weekNum}-${qi}`) === '1';
+            return `<div class="qa-card${revealed?' revealed answered':''}" id="qacard${weekNum}_${qi}">
+              <div class="qa-q">${item.q}</div>
+              ${revealed
+                ? `<div class="qa-answer">${item.a}</div>`
+                : `<button class="qa-reveal-btn" onclick="revealQA(${weekNum},${qi})">👁 Say it first, then reveal</button>`
+              }
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="pass-section">
+        <div class="pass-header">✅ Part 3 — Pass Criteria (only check when truly true)</div>
+        <div class="pass-list">
+          ${ch.pass.map((item, pi) => {
+            const checked = localStorage.getItem(`chpass-${weekNum}-${pi}`) === '1';
+            return `<label class="pass-item${checked?' checked':''}" id="passitem${weekNum}_${pi}">
+              <input type="checkbox" ${checked?'checked':''}
+                onchange="savePass(${weekNum},${pi},this.checked)">
+              ${item}
+            </label>`;
+          }).join('')}
+        </div>
+      </div>
+
+    </div>`;
+
+  parentEl.appendChild(wrap);
+}
+
+function toggleChallenge(n) {
+  const wrap=document.getElementById(`ch${n}`);
+  const body=wrap.querySelector('.challenge-body');
+  const btn=document.getElementById(`chtbtn${n}`);
+  const isOpen=wrap.classList.contains('open');
+
+  if(!isOpen){
+    wrap.classList.add('open');
+    body.style.height='auto';
+    const h=body.scrollHeight;
+    body.style.height='0';
+    requestAnimationFrame(()=>{
+      body.style.height=h+'px';
+      setTimeout(()=>{ if(wrap.classList.contains('open')) body.style.height='auto'; },380);
+    });
+    if(btn) btn.textContent='Collapse';
+  } else {
+    body.style.height=body.scrollHeight+'px';
+    requestAnimationFrame(()=>{ body.style.height='0'; });
+    setTimeout(()=>{ wrap.classList.remove('open'); },340);
+    if(btn) btn.textContent='Open Challenge';
+  }
+}
+
+function revealQA(weekNum, qi) {
+  const card = document.getElementById(`qacard${weekNum}_${qi}`);
+  if (!card) return;
+  const ch = CHALLENGES[weekNum];
+  card.classList.add('revealed', 'answered');
+  card.innerHTML = `<div class="qa-q">${ch.qa[qi].q}</div><div class="qa-answer">${ch.qa[qi].a}</div>`;
+  localStorage.setItem(`chqa-${weekNum}-${qi}`, '1');
+}
+
+function saveBuildDone(weekNum, val) {
+  localStorage.setItem(`chbuild-${weekNum}`, val ? '1' : '0');
+  markToday();
+}
+
+function savePass(weekNum, pi, val) {
+  localStorage.setItem(`chpass-${weekNum}-${pi}`, val ? '1' : '0');
+  const item = document.getElementById(`passitem${weekNum}_${pi}`);
+  if (item) item.classList.toggle('checked', val);
+  /* celebrate if all pass items checked */
+  const ch = CHALLENGES[weekNum];
+  const allDone = ch.pass.every((_,i) => localStorage.getItem(`chpass-${weekNum}-${i}`) === '1');
+  if (allDone && val) showToast('🏆 Week ' + weekNum + ' challenge passed! You are ready to move on.');
+  markToday();
+}
+
+/* ─── HOOK CHALLENGE INTO WEEK RENDER ────────────── */
+// Patch renderAll to append challenge after resources in each week body
+const _origRenderAll = renderAll;
+// Override is done inline — challenge is appended after resources via renderChallenge call
+
+/* Persist streak on any interaction */
+document.addEventListener('change',()=>{markToday();updateStats();});
+
+/* ─── BOOT ──────────────────────────────────────── */
+renderAll();
+</script>
+</body>
+</html>
