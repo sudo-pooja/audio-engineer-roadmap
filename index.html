@@ -190,8 +190,6 @@ body {
    MAIN LAYOUT
    ══════════════════════════════════════════════ */
 .container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.25rem; }
-.month-section { display: none; }
-.month-section.active { display: block; }
 
 /* Month hero card */
 .month-hero {
@@ -545,7 +543,7 @@ body {
 
 .challenge-body { display: none; }
 .challenge-wrap.open .challenge-body { display: block; }
-.challenge-wrap.open .challenge-toggle-btn { content: 'Collapse'; }
+/* challenge button label is set by JS (toggleChallenge) */
 
 /* Build task */
 .build-task {
@@ -685,6 +683,8 @@ body {
   border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
 }
 .pass-item.checked { color: var(--muted); text-decoration: line-through; }
+
+
 
 /* ══════════════════════════════════════════════
    MOBILE BOTTOM NAV
@@ -880,6 +880,44 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Premium countdown ── */
+#cdStrip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.cd-days-num {
+  font-size: 1rem; font-weight: 800; color: var(--amber);
+  line-height: 1; letter-spacing: -0.02em;
+}
+.cd-days-lbl {
+  font-size: 0.58rem; font-weight: 700; color: var(--muted2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.cd-divider {
+  width: 1px; height: 14px; background: var(--border2);
+  flex-shrink: 0;
+}
+.cd-hms-wrap {
+  display: inline-flex; align-items: baseline; gap: 0;
+}
+.cd-hms-num {
+  font-size: 0.78rem; font-weight: 800; color: var(--text);
+}
+.cd-hms-unit {
+  font-size: 0.52rem; font-weight: 600; color: var(--muted2);
+  margin-right: 0.2rem;
+}
+.cd-colon {
+  font-size: 0.72rem; font-weight: 700; color: var(--muted2);
+  margin: 0 0.05rem; line-height: 1;
+}
+.cd-done { font-size: 0.75rem; font-weight: 800; color: var(--green); }
+@media (max-width: 480px) {
+  .cd-days-num { font-size: 0.88rem; }
+  .cd-hms-num  { font-size: 0.7rem; }
+  .cd-divider  { height: 12px; }
+}
 </style>
 </head>
 <body>
@@ -898,13 +936,12 @@ body {
       <div class="header-stats">
         <div class="stat-pill"><span class="stat-val green" id="sDone">0</span><span class="stat-lbl">Done</span></div>
         <div class="stat-pill"><span class="stat-val" id="sLeft">0</span><span class="stat-lbl">Left</span></div>
-        <div class="stat-pill"><span class="stat-val amber" id="sStreak">0🔥</span><span class="stat-lbl">Streak</span></div>
       </div>
     </div>
 
     <div class="progress-wrap">
       <div class="progress-label">
-        <span>Overall Progress — 12 weeks to Audio AI Engineer</span>
+        <span id="cdStrip">⏱ Loading…</span>
         <strong id="pctLabel">0%</strong>
       </div>
       <div class="progress-track">
@@ -1440,11 +1477,11 @@ const QUOTES=[
 let focusMode=false;
 
 /* ─── HELPERS ───────────────────────────────────── */
+/* Escapes HTML entities — used wherever data is inserted into innerHTML */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function tid(w,d,t){return `w${w}d${d}t${t}`;}
 function getC(id){return localStorage.getItem(id)==='1';}
 function setC(id,v){localStorage.setItem(id,v?'1':'0');}
-function todayKey(){return 'streak-'+new Date().toISOString().slice(0,10);}
-function markToday(){localStorage.setItem(todayKey(),'1');}
 
 function getTodayDayName(){return DAY_NAMES[new Date().getDay()];}
 
@@ -1495,17 +1532,17 @@ function renderAll(){
     const todayName=getTodayDayName();
     sec.innerHTML=`
       <div class="toolbar">
-        <button class="tool-btn" onclick="toggleFocus()">Hide done</button>
+        <button class="tool-btn" data-focus="off" onclick="toggleFocus(this)">Hide done</button>
         <button class="tool-btn" onclick="expandAll()">Expand all</button>
         <button class="tool-btn" onclick="collapseAll()">Collapse all</button>
-        <div class="today-chip"><span class="dot"></span>Today is ${todayName}</div>
+        <div class="today-chip"><span class="dot"></span>Today is ${esc(todayName)}</div>
       </div>
       <div class="month-hero">
-        <div class="month-badge">${month.month}</div>
+        <div class="month-badge">${esc(month.month)}</div>
         <div class="month-info">
-          <div class="month-title">${month.title}</div>
-          <div class="month-sub">${month.sub}</div>
-          <div class="month-chips">${month.milestones.map(m=>`<span class="chip">${m}</span>`).join('')}</div>
+          <div class="month-title">${esc(month.title)}</div>
+          <div class="month-sub">${esc(month.sub)}</div>
+          <div class="month-chips">${month.milestones.map(m=>`<span class="chip">${esc(m)}</span>`).join('')}</div>
         </div>
       </div>`;
 
@@ -1681,7 +1718,6 @@ function toggleDay(wn,di,checked){
   }
   updateWeekPct(wn);
   updateStats();
-  markToday();
   /* Peak-End Rule: celebrate week completion */
   const {totalT,doneT}=weekStats(week);
   if(doneT===totalT&&checked) showToast('🎉 Week '+wn+' complete! You earned it.');
@@ -1713,27 +1749,19 @@ function updateStats(){
   document.getElementById('pctLabel').textContent=pct+'%';
   document.getElementById('sDone').textContent=done;
   document.getElementById('sLeft').textContent=total-done;
-  /* streak */
-  let streak=0;
-  const today=new Date(); today.setHours(0,0,0,0);
-  for(let i=0;i<90;i++){
-    const d=new Date(today); d.setDate(d.getDate()-i);
-    if(localStorage.getItem('streak-'+d.toISOString().slice(0,10))==='1')streak++;
-    else if(i>0)break;
-  }
-  document.getElementById('sStreak').textContent=streak+'🔥';
 }
 
-function toggleFocus(){
+
+function toggleFocus(btn){
   focusMode=!focusMode;
-  document.querySelectorAll('.tool-btn').forEach(b=>{
-    if(b.textContent==='Hide done'||b.textContent==='Show done'){
-      b.textContent=focusMode?'Show done':'Hide done';
-      b.classList.toggle('active',focusMode);
-    }
+  /* use data attribute — not textContent — to avoid brittle string matching */
+  document.querySelectorAll('[data-focus]').forEach(b=>{
+    b.dataset.focus = focusMode ? 'on' : 'off';
+    b.textContent   = focusMode ? 'Show done' : 'Hide done';
+    b.classList.toggle('active', focusMode);
   });
   document.querySelectorAll('.day-card').forEach(dc=>{
-    if(dc.classList.contains('done'))dc.classList.toggle('hidden',focusMode);
+    if(dc.classList.contains('done')) dc.classList.toggle('hidden', focusMode);
   });
 }
 
@@ -1894,30 +1922,59 @@ function revealQA(weekNum, qi) {
 
 function saveBuildDone(weekNum, val) {
   localStorage.setItem(`chbuild-${weekNum}`, val ? '1' : '0');
-  markToday();
+  updateStats();
 }
 
 function savePass(weekNum, pi, val) {
   localStorage.setItem(`chpass-${weekNum}-${pi}`, val ? '1' : '0');
   const item = document.getElementById(`passitem${weekNum}_${pi}`);
   if (item) item.classList.toggle('checked', val);
-  /* celebrate if all pass items checked */
   const ch = CHALLENGES[weekNum];
   const allDone = ch.pass.every((_,i) => localStorage.getItem(`chpass-${weekNum}-${i}`) === '1');
   if (allDone && val) showToast('🏆 Week ' + weekNum + ' challenge passed! You are ready to move on.');
-  markToday();
+  updateStats();
 }
 
-/* ─── HOOK CHALLENGE INTO WEEK RENDER ────────────── */
-// Patch renderAll to append challenge after resources in each week body
-const _origRenderAll = renderAll;
-// Override is done inline — challenge is appended after resources via renderChallenge call
+/* challenge is appended to week-body inside renderAll via renderChallenge() */
+document.addEventListener('change',()=>{updateStats();});
 
-/* Persist streak on any interaction */
-document.addEventListener('change',()=>{markToday();updateStats();});
+/* ─── COUNTDOWN ──────────────────────────────────── */
+function getEndDate(){
+  /* explicit local-time constructor — avoids UTC vs local parsing ambiguity */
+  return new Date(2026, 7, 31, 23, 59, 59); /* month is 0-indexed: 7 = August */
+}
+
+function tickCountdown(){
+  const el=document.getElementById('cdStrip'); if(!el) return;
+  const diff=getEndDate()-Date.now();
+
+  if(diff<=0){
+    el.innerHTML='<span class="cd-done">🎉 Journey complete!</span>';
+    return;
+  }
+
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  const p=n=>String(n).padStart(2,'0');
+
+  el.innerHTML=`
+    <span class="cd-days-num">${d}</span><span class="cd-days-lbl">days</span>
+    <span class="cd-divider"></span>
+    <span class="cd-hms-wrap">
+      <span class="cd-hms-num">${p(h)}</span><span class="cd-hms-unit">h</span>
+      <span class="cd-colon">:</span>
+      <span class="cd-hms-num">${p(m)}</span><span class="cd-hms-unit">m</span>
+      <span class="cd-colon">:</span>
+      <span class="cd-hms-num">${p(s)}</span><span class="cd-hms-unit">s</span>
+    </span>`;
+}
 
 /* ─── BOOT ──────────────────────────────────────── */
 renderAll();
+tickCountdown();
+setInterval(tickCountdown, 1000);
 </script>
 </body>
 </html>
